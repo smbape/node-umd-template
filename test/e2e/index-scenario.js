@@ -55,15 +55,17 @@ function scenario(build, languge) {
             });
         });
 
-        it('should have 3 translated menu item', function() {
+        it('should have 4 translated menu item', function() {
             browser.driver.findElements(by.css('#toolbar .menu a')).then(function(items) {
-                expect(items.length).toBe(3);
+                expect(items.length).toBe(4);
                 expect(items[0].getText()).toBe(translation.home.home.index.title);
                 expect(items[0].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/index');
                 expect(items[1].getText()).toBe(translation.home.home.step1.title);
                 expect(items[1].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step1');
                 expect(items[2].getText()).toBe(translation.home.home.step2.title);
                 expect(items[2].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step2');
+                expect(items[3].getText()).toBe(translation.home.home.step3.title);
+                expect(items[3].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step3');
             });
         });
 
