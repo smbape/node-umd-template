@@ -55,9 +55,9 @@ function scenario(build, languge) {
             });
         });
 
-        it('should have 5 translated menu item', function() {
+        it('should have 6 translated menu item', function() {
             browser.driver.findElements(by.css('#toolbar .menu a')).then(function(items) {
-                expect(items.length).toBe(5);
+                expect(items.length).toBe(6);
                 expect(items[0].getText()).toBe(translation.home.home.index.title);
                 expect(items[0].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/index');
                 expect(items[1].getText()).toBe(translation.home.home.step1.title);
@@ -68,6 +68,8 @@ function scenario(build, languge) {
                 expect(items[3].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step3');
                 expect(items[4].getText()).toBe(translation.home.home.step4.title);
                 expect(items[4].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step4');
+                expect(items[5].getText()).toBe(translation.home.home.step5.title);
+                expect(items[5].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step5');
             });
         });
 
