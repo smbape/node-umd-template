@@ -55,11 +55,13 @@ function scenario(build, languge) {
             });
         });
 
-        it('should have 1 translated menu item', function() {
+        it('should have 2 translated menu item', function() {
             browser.driver.findElements(by.css('#toolbar .menu a')).then(function(items) {
-                expect(items.length).toBe(1);
+                expect(items.length).toBe(2);
                 expect(items[0].getText()).toBe(translation.home.home.index.title);
                 expect(items[0].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/index');
+                expect(items[1].getText()).toBe(translation.home.home.step1.title);
+                expect(items[1].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/step1');
             });
         });
 
