@@ -1,0 +1,246 @@
+<%
+    var require = root.require,
+        __dirname = root.__dirname,
+        __filename = root.__filename;
+
+    var fs = require('fs'),
+        sysPath = require('path'),
+        isAppBuild = root.build === 'app';
+
+    var computeOptimization = !root.optimize && !isAppBuild;
+%><!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="Stéphane Mbape">
+        <link rel="shortcut icon" href="favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="favicon.ico" />
+        <title>Buma</title>
+        <link rel="stylesheet" href="stylesheets/app.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <link rel="stylesheet" href="https://code.getmdl.io/1.1.1/material.blue_grey-blue.min.css" /> 
+        <script type="text/javascript" src="vendor/modernizr-custom.js"></script>
+        <% if (!isAppBuild) { %>
+            <script type="text/javascript" src="node_modules/umd-core/src/path-browserify.js" data-requiremodule="umd-core/src/path-browserify"></script>
+            <script type="text/javascript" src="node_modules/umd-core/src/depsLoader.js" data-requiremodule="umd-core/src/depsLoader"></script>
+        <% } %>
+        <script type="text/javascript">
+            var appConfig = {baseUrl: '', build: '<%= root.build %>', isProduction: <%= root.optimize ? 'true' : 'false' %>};
+            <% if (computeOptimization) { %>var optimizer = {};<% } %>
+            (function() {
+                'use strict';
+
+                var timerInit = new Date().getTime(), lastDiff = 0;
+                appConfig.timerDiff = timerDiff;
+                appConfig.ready = ready;
+                appConfig.onRouteChangeSuccess = onRouteChangeSuccess;
+
+                document.addEventListener('start', onStart, false);
+                document.addEventListener('onRouteChangeSuccess', onRender, false);
+                
+                function onStart(evt) {
+                    document.removeEventListener('start', onStart);
+                    console.log('ready', timerDiff());
+                    // alert(timerDiff()[1]);
+                }
+
+                function onRender(evt) {
+                    document.removeEventListener('onRouteChangeSuccess', onRender);
+                    if (!window.rendered) {
+                        window.rendered = true;
+                        console.log('Initial onRouteChangeSuccess took', timerDiff());
+                        // alert(timerDiff()[1]);
+
+                        <% if (computeOptimization) { %> 
+                        require('jquery')('head script[data-requiremodule]').each(function(index, element) {
+                            var config = optimizer[element.src];
+                            if (config) {
+                                config.name = element.getAttribute('data-requiremodule');
+                            }
+                        });
+                        var filenameMap = {}, config;
+                        var _ = require('lodash'),
+                            sysPath = pathBrowserify;
+                        for (var src in optimizer) {
+                            config = optimizer[src];
+                            config.deps = config.deps.slice();
+                            for (var i = 0, len = config.deps.length; i < len; i++) {
+                                if (_.isObject(config.deps[i])) {
+                                    config.deps[i] = config.deps[i].amd;
+                                }
+
+                                if (config.deps[i] && ~config.deps[i].indexOf('.')) {
+                                    config.deps[i] = sysPath.resolve(sysPath.dirname(config.filename), config.deps[i] + '.js');
+                                }
+                            }
+                            filenameMap[config.filename] = _.clone(config);
+                        }
+                        console.log('module.exports =', JSON.stringify(filenameMap, null, 4));
+                        <% } %>
+                    }
+                    console.log('onRouteChangeSuccess');
+                }
+
+                function timerDiff() {
+                    var newDiff = new Date().getTime() - timerInit,
+                        addDiff = newDiff - lastDiff;
+                    lastDiff = newDiff;
+                    return ['+' + addDiff, newDiff];
+                }
+
+                function ready() {
+                    var evt = document.createEvent("Event");
+                    evt.initEvent('start', true, true);
+                    document.dispatchEvent(evt);
+                }
+
+                function onRouteChangeSuccess() {
+                    var evt = document.createEvent("Event");
+                    evt.initEvent('onRouteChangeSuccess', true, true);
+                    document.dispatchEvent(evt);
+                }
+
+            }());
+        </script>
+    </head>
+    <body class="body">
+        <% if (isAppBuild) { %>
+            <script type="text/javascript">appConfig.build = '<%= root.build %>';</script>
+            <script type="text/javascript" src="javascripts/vendor.js"></script>
+            <script type="text/javascript" src="javascripts/app.js"></script>
+            <script type="text/javascript">
+                window.depsLoader = require('umd-core/src/depsLoader');
+                window.pathBrowserify = require('umd-core/src/path-browserify');
+            </script>
+            <script type="text/javascript">require("initialize");</script>
+        <% } else { %>
+            <script type="text/javascript">appConfig.build = '<%= root.build %>';</script>
+        <% } %>
+
+        <%  if (!isAppBuild && !computeOptimization) { %>
+            <%-- <script type="text/javascript" src="javascripts/main-all.js"></script> --%>
+            <script type="text/javascript" src="vendor/require.js"></script>
+            <script type="text/javascript">require([appConfig.baseUrl + '/../javascripts/main-dev.js']);</script>
+        <% } else if (computeOptimization) { %>
+            <script type="text/javascript" src="vendor/require.js"></script>
+            <script type="text/javascript">
+                (function() {
+                    'use strict';
+
+                    var _define = window.define,
+                        _amd = depsLoader.amd,
+                        baseUrl = document.location.protocol + '//' + document.location.host + appConfig.baseUrl,
+                        stack;
+                
+                    define.amd = {jQuery: true};
+                    window.define = define;
+                    depsLoader.amd = amd;
+
+                    require([appConfig.baseUrl + '/../javascripts/main-dev.js']);
+
+                    function annotate(deps, stack, hasName) {
+                        var ref = getDefineLocation(stack),
+                            line = ref[0],
+                            col = ref[1],
+                            index = ref[2],
+                            lastIndex = ref[3];
+
+                        // 8 is the number of character from previous line end until new line trace begin
+                        // "\n     at "
+                        var trace = stack.substring(index + 8, lastIndex),
+                            filename = trace.substring(baseUrl.length);
+
+                        filename = filename.substring(0, filename.indexOf(':'));
+
+                        // skip files to not merge
+                        if ( filename === 'javascripts/main-dev.js' || ( !/(?:ClientController|ReactModelView|ReactCollectionView)\.js/.test(filename) && /(?:Controller|View)\.js$/.test(filename) ) ) {
+                            return;
+                        }
+
+                        var src = baseUrl + filename;
+
+                        optimizer[src] = {
+                            filename: filename,
+                            line: line,
+                            col: col,
+                            deps: deps,
+                            hasName: hasName
+                        };
+                    }
+
+                    function define(name, deps, callback) {
+                        switch (arguments.length) {
+                            case 1:
+                                annotate([], (new Error()).stack);
+                                break;
+                            case 2:
+                                annotate(name, (new Error()).stack);
+                                break;
+                            case 3:
+                                annotate(deps, (new Error()).stack, true);
+                                break;
+                        }
+
+                        _define.apply(this, arguments);
+                    }
+
+                    function amd(name, deps, callback, global) {
+                        if (arguments.length === 3) {
+                            annotate(name, (new Error()).stack);
+                        }
+
+                        window.define = _define;
+                        _amd.apply(this, arguments);
+                        window.define = define;
+                    }
+
+                    function getDefineLocation(stack, depth) {
+                        var col, curr, end, index, lastIndex, line, start;
+                        if (depth == null) {
+                            depth = 0;
+                        }
+                        if (depth < 0) {
+                            return;
+                        }
+
+                        //  goto the 3rd line
+                        index = stack.indexOf('\n');
+                        index = stack.indexOf('\n', index + 1);
+
+                        // get interested line
+                        while (index !== -1 && depth-- !== 0) {
+                            index = stack.indexOf('\n', index + 1);
+                        }
+
+                        // get end of interested line
+                        lastIndex = stack.indexOf('\n', index + 1);
+
+                        curr = col;
+                        if (stack.charAt(lastIndex - 1) === ')') {
+                            // define is in a named function
+                            // "- 7" to be consistent with "+ 8"
+                            index = stack.indexOf('(', index) - 7;
+                            --lastIndex;
+                        }
+
+                        start = lastIndex;
+                        end = start;
+                        while (start > index && stack[start] !== ':') {
+                            start--;
+                        }
+                        col = parseInt(stack.substring(start + 1, end));
+                        end = start--;
+                        while (start > index && stack[start] !== ':') {
+                            start--;
+                        }
+                        line = parseInt(stack.substring(start + 1, end));
+                        return [line, col, index, lastIndex];
+                    }
+                }());
+            </script>
+        <% } %>
+    </body>
+</html>
