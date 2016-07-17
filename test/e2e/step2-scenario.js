@@ -39,7 +39,7 @@ function scenario(build, languge) {
         });
 
         it('should filter the phone list as a user types into the search box', function() {
-            var phoneList = element.all(by.css('.phones li'));
+            var phoneList = element.all(by.css('.phones .name'));
             var query = element(by.css('input'));
 
             expect(phoneList.count()).toBe(3);
@@ -54,7 +54,7 @@ function scenario(build, languge) {
         });
 
         it('should be possible to control phone order via the drop down select box', function() {
-            var phoneNameColumn = element.all(by.css('.phones li span'));
+            var phoneNameColumn = element.all(by.css('.phones .name'));
             var query = element(by.css('input'));
 
             function getNames() {
