@@ -25,7 +25,7 @@
     "moment": "^2.11.1",
     "qs": "git+https://github.com/hapijs/qs#^5.1.0",
     "react": "^15.2.1",
-    "umd-core": "git@gitlab.smbape.com:smbape/node-umd-core.git#master"
+    "umd-core": "^1.2.2"
   },
   "overrides": {
     "backbone": {
