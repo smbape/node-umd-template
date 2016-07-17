@@ -102,7 +102,7 @@
 
     "overrides": {
         "*.coffee": {
-            "immed": false,
+            "immed": false, // true: Require immediate invocations to be wrapped in parens e.g. `(function () { } ());`
             "curly": false, // true: Require {} for every new block or scope
             "newcap": false, // true: Require capitalization of all constructor functions e.g. `new F()`
             "boss": true, // true: Tolerate assignments where comparisons would be expected

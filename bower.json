@@ -12,20 +12,20 @@
   ],
   "licenses": "MIT",
   "dependencies": {
-    "backbone": "~1.2.3",
+    "backbone": "^1.2.3",
     "backbone.validation": "backbone-validation#^0.11.5",
-    "bootstrap": "~3.3.6",
-    "i18next": "~2.0.10",
-    "jquery": "~2.1.4",
+    "bootstrap": "^3.3.6",
+    "i18next": "^2.0.10",
+    "jquery": "^2.1.4",
     "jquery-mockjax": "^2.1.0",
     "jquery-touchswipe": "^1.6.15",
-    "lodash": "~3.10.1",
-    "marked": "~0.3.5",
+    "lodash": "^3.10.1",
+    "marked": "^0.3.5",
     "material-design-lite": "^1.1.1",
-    "moment": "~2.11.1",
-    "qs": "git+https://github.com/hapijs/qs#~5.1.0",
-    "react": "~0.14.7",
-    "umd-core": "~1.1.1"
+    "moment": "^2.11.1",
+    "qs": "git+https://github.com/hapijs/qs#^5.1.0",
+    "react": "^15.2.1",
+    "umd-core": "git@gitlab.smbape.com:smbape/node-umd-core.git#master"
   },
   "overrides": {
     "backbone": {
@@ -49,7 +49,7 @@
       "dependencies": {
         "jquery": "*"
       },
-      "exports": "$.fn.emulateTransitionEnd"
+      "exports": "jQuery.fn.emulateTransitionEnd"
     },
     "material-design-lite": {
       "main": [
@@ -58,9 +58,11 @@
     },
     "react": {
       "main": [
-        "react.min.js",
-        "react-dom.min.js"
-      ]
+        "react.min.js"
+      ],
+      "map": {
+        "react-dom.min.js": "react-dom"
+      }
     }
   }
 }

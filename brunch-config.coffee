@@ -6,10 +6,8 @@ ignore = (path)-> config.conventions.vendor(path) || browserifyFile.test path
 
 config.compilers.unshift require('umd-builder/lib/compilers/babel')
 config.compilers.push.apply config.compilers, [
-    require('umd-builder/lib/compilers/handlebars')
-    require('umd-builder/lib/compilers/jst/jst')
     require('umd-builder/lib/compilers/html')
-    require('umd-builder/lib/compilers/markdown')
+    require('umd-builder/lib/compilers/stylus')
 ]
 
 # https://github.com/brunch/brunch/blob/1.8.5/docs/config.md
@@ -20,7 +18,6 @@ exports.config = _.merge config,
         map:
             '*':
                 underscore: 'lodash'
-                'react-dom': 'bundle-react-0'
 
     plugins:
         babel:
@@ -32,8 +29,8 @@ exports.config = _.merge config,
 
     server:
         path: './server/HttpServer'
-        host: '127.0.0.1'
+        hostname: '127.0.0.1'
         port: 3330
 
     paths:
-        watched: [ 'app', 'vendor', 'bower_components/umd-core' ]
+        watched: [ 'app', 'vendor' ]
