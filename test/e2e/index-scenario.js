@@ -1,41 +1,22 @@
-var waitRender = require('./waitRender'),
-    waitTimeout = require('./waitTimeout'),
-    config = require('../protractor-conf').config,
-    resources = getResources(),
-    resourceMap = {
-        en: 'en-GB',
-        fr: 'fr-FR'
-    };
+var config = require('../protractor-conf').config;
 
-cleanResources();
-updateRessources(require('../../public/node_modules/umd-core/src/resources'));
-updateRessources(require('../../public/node_modules/umd-core/src/validation/resources'));
-updateRessources(require('../../public/node_modules/configs/resources'));
+addScenario('Index', function scenario(build, languge) {
+    'use strict';
 
-describe('Index', function() {
-    var builds = ['web', 'app'],
-        languages = ['en', 'fr'],
-        leni = builds.length,
-        lenj = languages.length,
-        build, language, i, j;
-
-    for (i = 0; i < leni; i++) {
-        build = builds[i];
-        for (j = 0; j < lenj; j++) {
-            language = languages[j];
-            describe('index/' + build + '/' + language, scenario(build, language));
-        }
-    }
-});
-
-function scenario(build, languge) {
-    var url = build + '/' + languge + '/home/home/index',
-        translation = resources[resourceMap[languge]].translation;
+    var url = config.baseUrl + build + '/' + languge + '/home/home/index',
+        translate;
 
     return function() {
         beforeAll(function() {
-            browser.driver.get(config.baseUrl + url);
-            browser.executeAsyncScript(waitRender);
+            browser.driver.get(url);
+            waitRender();
+            initTranslation(languge, [
+                require('../../public/node_modules/umd-core/src/resources'),
+                require('../../public/node_modules/umd-core/src/validation/resources'),
+                require('../../public/node_modules/configs/resources')
+            ], function(err, t) {
+                translate = t;
+            });
         });
 
         it('should translated have title', function() {
@@ -43,7 +24,7 @@ function scenario(build, languge) {
                 var callback = arguments[arguments.length - 1];
                 callback(window.document.title);
             }).then(function(title) {
-                expect(title).toBe(translation.home.home.index.title + ' - Tutorial');
+                expect(title).toBe(translate('home.home.index.title') + ' - Tutorial');
             });
         });
 
@@ -58,7 +39,7 @@ function scenario(build, languge) {
         it('should have 1 translated menu item', function() {
             browser.driver.findElements(by.css('#toolbar .menu a')).then(function(items) {
                 expect(items.length).toBe(1);
-                expect(items[0].getText()).toBe(translation.home.home.index.title);
+                expect(items[0].getText()).toBe(translate('home.home.index.title'));
                 expect(items[0].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/index');
             });
         });
@@ -68,5 +49,5 @@ function scenario(build, languge) {
                 expect(content.getText()).toBe('HOME INDEX ACTION');
             });
         });
-    }
-}
+    };
+});
