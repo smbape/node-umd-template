@@ -19,13 +19,13 @@
     "jquery": "^2.1.4",
     "jquery-mockjax": "^2.1.0",
     "jquery-touchswipe": "^1.6.15",
-    "lodash": "^3.10.1",
+    "lodash": "^4.14.1",
     "marked": "^0.3.5",
     "material-design-lite": "^1.1.1",
     "moment": "^2.11.1",
     "qs": "git+https://github.com/hapijs/qs#^5.1.0",
     "react": "^15.2.1",
-    "umd-core": "^1.2.2"
+    "umd-core": "git@gitlab.smbape.com:smbape/node-umd-core.git#master"
   },
   "overrides": {
     "backbone": {
@@ -50,6 +50,9 @@
         "jquery": "*"
       },
       "exports": "jQuery.fn.emulateTransitionEnd"
+    },
+    "lodash": {
+      "main": "dist/lodash.js"
     },
     "material-design-lite": {
       "main": [

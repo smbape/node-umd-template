@@ -22,6 +22,8 @@
     "chai": "^3.5.0",
     "coffee-script-brunch": "^2.0.0",
     "htmltojsx": "^0.2.5",
+    "i18next": "^3.4.1",
+    "jasmine-core": "^2.4.1",
     "karma": "^1.1.1",
     "karma-chrome-launcher": "^1.0.1",
     "karma-firefox-launcher": "^1.0.0",
@@ -29,8 +31,9 @@
     "karma-requirejs": "^1.0.0",
     "mocha": "^2.5.3",
     "protractor": "^4.0.0",
+    "requirejs": "^2.2.0",
     "sass-brunch": "^2.6.3",
-    "umd-builder": "^2.4.1",
+    "umd-builder": "git+https://gitlab.smbape.com/smbape/node-umd-builder.git",
     "yargs": "^4.8.0"
   }
 }
