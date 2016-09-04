@@ -10,7 +10,7 @@ config.compilers.push.apply config.compilers, [
     require('umd-builder/lib/compilers/stylus')
 ]
 
-# https://github.com/brunch/brunch/blob/1.8.5/docs/config.md
+# https://github.com/brunch/brunch/blob/2.8.2/docs/config.md
 exports.config = _.merge config,
 
     requirejs:
