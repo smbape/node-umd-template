@@ -30,10 +30,10 @@
     "karma-jasmine": "^1.0.2",
     "karma-requirejs": "^1.0.0",
     "mocha": "^2.5.3",
-    "protractor": "^4.0.0",
+    "protractor": "^4.0.4",
     "requirejs": "^2.2.0",
     "sass-brunch": "^2.6.3",
-    "umd-builder": "^2.4.5",
+    "umd-builder": "^2.5.1",
     "yargs": "^4.8.0"
   }
 }
