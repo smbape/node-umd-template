@@ -33,7 +33,7 @@
     "protractor": "^4.0.4",
     "requirejs": "^2.2.0",
     "sass-brunch": "^2.6.3",
-    "umd-builder": "git+https://gitlab.smbape.com/smbape/node-umd-builder.git",
+    "umd-builder": "^2.5.1",
     "yargs": "^4.8.0"
   }
 }
