@@ -9,6 +9,8 @@ exports.config = {
         'browserName': 'chrome'
     }, {
         'browserName': 'firefox'
+    // }, {
+    //     'browserName': 'internet explorer'
     }],
 
     baseUrl: 'http://127.0.0.1:3330/',
@@ -68,7 +70,8 @@ function onPrepare() {
         addScenario: addScenario,
         waitTimeout: waitTimeout,
         waitRender: waitRender,
-        waitRouteChangeSuccess: waitRouteChangeSuccess
+        waitRouteChangeSuccess: waitRouteChangeSuccess,
+        setInputValue: setInputValue
     });
 }
 
@@ -172,4 +175,25 @@ function _waitRouteChangeSuccess(prevUrl, nextUrl) {
         document.removeEventListener('onRouteChangeSuccess', onRender);
         callback();
     }
+}
+
+/**
+ * SendKeys intermittently inserts incorrect text on IE only
+ * https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/3699
+ * @param  {Element} input Input element
+ * @param  {Stirng}  value text to send
+ * @return {Promise}
+ */
+function setInputValue(input, value) {
+    return new Promise(function(resolve, reject) {
+        input.clear();
+        input.sendKeys(value).then(function() {
+            return input.getAttribute('value');
+        }).then(function(res) {
+            if (res !== value) {
+                return setInputValue(input, value).then(resolve);
+            }
+            resolve(value);
+        });
+    });
 }

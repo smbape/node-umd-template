@@ -28,12 +28,10 @@ addScenario('Step3', function scenario(build, languge) {
 
             expect(phoneList.count()).toBe(4);
 
-            query.clear();
-            query.sendKeys('nexus');
+            setInputValue(query, 'nexus');
             expect(phoneList.count()).toBe(1);
 
-            query.clear();
-            query.sendKeys('motorola');
+            setInputValue(query, 'motorola');
             expect(phoneList.count()).toBe(3);
         });
 
@@ -50,8 +48,7 @@ addScenario('Step3', function scenario(build, languge) {
                 });
             }
 
-            query.clear();
-            query.sendKeys('tablet'); //let's narrow the dataset to make the test assertions shorter
+            setInputValue(query, 'tablet'); //let's narrow the dataset to make the test assertions shorter
 
             expect(getNames()).toEqual([
                 "Motorola XOOM\u2122 with Wi-Fi",

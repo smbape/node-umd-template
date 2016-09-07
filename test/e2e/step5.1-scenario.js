@@ -211,8 +211,7 @@ addScenario('Step5.1', function scenario(build, languge) {
 
     function setInputs(inputs, attributes) {
         for (var prop in attributes) {
-            inputs[prop].clear();
-            inputs[prop].sendKeys(attributes[prop]);
+            setInputValue(inputs[prop], attributes[prop]);
         }
     }
 
