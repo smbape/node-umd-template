@@ -38,8 +38,7 @@ addScenario('Step4', function scenario(build, languge) {
             ]);
 
             // modifying another input should preserve error
-            firstName.clear();
-            firstName.sendKeys('Liquid');
+            setInputValue(firstName, 'Liquid');
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
                 translate('error.email')
@@ -54,8 +53,7 @@ addScenario('Step4', function scenario(build, languge) {
             ]);
 
             // attribute error should disappear 
-            email.clear();
-            email.sendKeys("ipsum@lorem.com");
+            setInputValue(email, "ipsum@lorem.com");
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
                 translate('error.email')
