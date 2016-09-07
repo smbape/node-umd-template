@@ -25,12 +25,10 @@ addScenario('Step1', function scenario(build, languge) {
 
             expect(phoneList.count()).toBe(3);
 
-            query.clear();
-            query.sendKeys('nexus');
+            setInputValue(query, 'nexus');
             expect(phoneList.count()).toBe(1);
 
-            query.clear();
-            query.sendKeys('motorola');
+            setInputValue(query, 'motorola');
             expect(phoneList.count()).toBe(2);
         });
 
