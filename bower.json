@@ -17,7 +17,6 @@
     "i18next": "^3.4.1",
     "jquery": "^3.1.0",
     "jquery-mockjax": "^2.1.0",
-    "jquery-touchswipe": "^1.6.15",
     "lodash": "^4.14.1",
     "marked": "^0.3.5",
     "material-design-lite": "^1.1.1",
