@@ -10,7 +10,7 @@ describe('Step3View', function() {
     })
 
     it('should create "phones" model no phones', function() {
-        expect(view.state).toBe(undefined);
+        expect(view.state.collection.length).toBe(0);
     });
 
     it('should set the default value of order model', function() {
