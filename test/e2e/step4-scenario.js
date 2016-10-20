@@ -1,41 +1,22 @@
-var waitRender = require('./waitRender'),
-    waitTimeout = require('./waitTimeout'),
-    config = require('../protractor-conf').config,
-    resources = getResources(),
-    resourceMap = {
-        en: 'en-GB',
-        fr: 'fr-FR'
-    };
+var config = require('../protractor-conf').config;
 
-cleanResources();
-updateRessources(require('../../public/node_modules/umd-core/src/resources'));
-updateRessources(require('../../public/node_modules/umd-core/src/validation/resources'));
-updateRessources(require('../../public/node_modules/configs/resources'));
+addScenario('Step4', function scenario(build, languge) {
+    'use strict';
 
-describe('Step 4', function() {
-    var builds = ['web', 'app'],
-        languages = ['en', 'fr'],
-        leni = builds.length,
-        lenj = languages.length,
-        build, language, i, j;
-
-    for (i = 0; i < leni; i++) {
-        build = builds[i];
-        for (j = 0; j < lenj; j++) {
-            language = languages[j];
-            describe('step4/' + build + '/' + language, scenario(build, language));
-        }
-    }
-});
-
-function scenario(build, languge) {
-    var url = build + '/' + languge + '/home/home/step4',
-        translation = resources[resourceMap[languge]].translation;
+    var url = config.baseUrl + build + '/' + languge + '/home/home/step4',
+        translate;
 
     return function() {
         beforeAll(function() {
-            browser.driver.get(config.baseUrl + url);
-            browser.executeAsyncScript(waitRender);
+            browser.driver.get(url);
+            waitRender();
+            initTranslation(languge, [
+                require('../../public/node_modules/umd-core/src/resources'),
+                require('../../public/node_modules/umd-core/src/validation/resources'),
+                require('../../public/node_modules/configs/resources')
+            ], function(err, t) {
+                translate = t;
+            });
         });
 
         it('should have display correct errors', function() {
@@ -53,31 +34,29 @@ function scenario(build, languge) {
             // primary invalid error should be displayed
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
-                translation.error.email
+                translate('error.email')
             ]);
 
             // modifying another input should preserve error
-            firstName.clear();
-            firstName.sendKeys('Liquid');
+            setInputValue(firstName, 'Liquid');
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
-                translation.error.email
+                translate('error.email')
             ]);
 
             // global error should display on click
             button.click();
             expect(errorList.count()).toBe(2);
             expect(getErrorList()).toEqual([
-                translation.error.email,
-                translation.error.email
+                translate('error.email'),
+                translate('error.email')
             ]);
 
             // attribute error should disappear 
-            email.clear();
-            email.sendKeys("ipsum@lorem.com");
+            setInputValue(email, "ipsum@lorem.com");
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
-                translation.error.email
+                translate('error.email')
             ]);
 
             // all errors should disappear
@@ -100,4 +79,4 @@ function scenario(build, languge) {
             expect(errorList.count()).toBe(0);
         });
     }
-}
+});
