@@ -9,11 +9,23 @@ describe('Step2View', function() {
     })
 
     it('should create "phones" model with 3 phones', function() {
-        expect(view.phones.length).toBe(3);
+        expect(view.phones).toEqual([{
+            'name': 'Nexus S',
+            'snippet': 'Fast just got faster with Nexus S.',
+            'age': 1
+        }, {
+            'name': 'Motorola XOOM™ with Wi-Fi',
+            'snippet': 'The Next, Next Generation tablet.',
+            'age': 2
+        }, {
+            'name': 'MOTOROLA XOOM™',
+            'snippet': 'The Next, Next Generation tablet.',
+            'age': 3
+        }]);
     });
 
-    it('should set the default value of orderProp model', function() {
-        expect(view.inline.get('orderProp')).toBe('age');
+    it('should set the default value of order model', function() {
+        expect(view.inline.get('order')).toBe('age');
     });
 
 });
