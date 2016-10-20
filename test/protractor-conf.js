@@ -1,3 +1,6 @@
+require('coffee-script').register();
+var server = require('../brunch-config').config.server;
+
 exports.config = {
     allScriptsTimeout: 11000,
 
@@ -6,14 +9,13 @@ exports.config = {
     ],
 
     multiCapabilities: [{
-        'browserName': 'chrome'
-    }, {
-        'browserName': 'firefox'
-    // }, {
-    //     'browserName': 'internet explorer'
-    }],
+            'browserName': 'chrome'
+        }, {
+            'browserName': 'firefox'
+        },
+    ],
 
-    baseUrl: 'http://127.0.0.1:3330/',
+    baseUrl: 'http://' + server.hostname + ':' + server.port + '/',
 
     framework: 'jasmine',
 
