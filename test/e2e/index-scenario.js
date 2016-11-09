@@ -40,7 +40,7 @@ addScenario('Index', function scenario(build, languge) {
             browser.driver.findElements(by.css('#toolbar .menu a')).then(function(items) {
                 expect(items.length).toBe(1);
                 expect(items[0].getText()).toBe(translate('home.home.index.title'));
-                expect(items[0].getAttribute('href')).toBe(config.baseUrl + build + '/' + languge + '/home/home/index');
+                expect(items[0].getAttribute('href')).toBeUrl([build + '/' + languge + '/home/home/index', config.baseUrl]);
             });
         });
 
