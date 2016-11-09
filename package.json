@@ -3,7 +3,7 @@
   "description": "UMD template projects",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "bower install && bower install angular-mocks angular-loader && npm run update-webdriver",
+    "postinstall": "node ./scripts/postinstall.js",
     "test": "npm run test-unit -- --single-run && npm run test-e2e",
     "test-unit": "karma start test/karma.conf.js",
     "test-e2e": "protractor test/protractor-conf.js",
@@ -18,6 +18,7 @@
   "main": "build.js",
   "license": "MIT",
   "devDependencies": {
+    "anyspawn": "^1.0.9",
     "babel-preset-react": "^6.11.1",
     "chai": "^3.5.0",
     "coffee-script": "^1.11.1",
@@ -31,10 +32,11 @@
     "karma-jasmine": "^1.0.2",
     "karma-requirejs": "^1.0.0",
     "mocha": "^2.5.3",
-    "protractor": "^4.0.4",
+    "protractor": "^4.0.10",
     "requirejs": "^2.2.0",
     "sass-brunch": "^2.6.3",
     "umd-builder": "^2.7.3",
+    "which": "^1.2.11",
     "yargs": "^4.8.0"
   }
 }
