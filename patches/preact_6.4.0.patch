@@ -1,5 +1,5 @@
 --- preact.ori.js	2016-11-12 13:15:29.943729700 +0100
-+++ preact.js	2016-11-12 13:41:34.652394600 +0100
++++ preact.js	2016-11-14 19:19:08.960693500 +0100
 @@ -1,327 +1,631 @@
 -!function(global, factory) {
 -    'object' == typeof exports && 'undefined' != typeof module ? factory(exports) : 'function' == typeof define && define.amd ? define([ 'exports' ], factory) : factory(global.preact = global.preact || {});
@@ -780,7 +780,7 @@
                      }
                  }
                  if (initialBase && base !== initialBase && inst !== initialChildComponent) {
-@@ -329,81 +633,222 @@
+@@ -329,81 +633,142 @@
                      if (baseParent && base !== baseParent) {
                          baseParent.replaceChild(base, initialBase);
                          if (!toUnmount) {
@@ -877,86 +877,6 @@
          }
          return dom;
      }
-+    //Returns true if it is a DOM node
-+    function isNode(o) {
-+        return (
-+            typeof Node === "object" ? o instanceof Node :
-+            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
-+        );
-+    }
-+
-+    //Returns true if it is a DOM element    
-+    function isElement(o) {
-+        return (
-+            typeof HTMLElement === "object" ? o instanceof HTMLElement : //DOM2
-+            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
-+        );
-+    }
-+
-+    function discardElement(el, remove) {
-+        while (el.lastChild) {
-+            discardElement(el.lastChild);
-+        }
-+
-+        if (el.nodeType === 1 && !/^(?:IMG|SCRIPT|INPUT)$/.test(el.nodeName)) {
-+            el.innerHTML = '';
-+        }
-+
-+        if (remove && el.parentNode) {
-+            el.parentNode.removeChild(el);
-+        }
-+    }
-+
-+    // function internalUnmountElement(el, remove) {
-+    //     if (!el || !el[expando]) {
-+    //         return;
-+    //     }
-+
-+    //     var inst = el[expando];
-+    //     var children = inst.children;
-+    //     var base, child;
-+
-+    //     if (children) {
-+    //         for (var i = 0, len = children.length; i < len; i++) {
-+    //             child = children[i];
-+    //             internalUnmountElement(child, true);
-+    //         }
-+    //     }
-+
-+    //     if (el instanceof Component) {
-+    //         base = inst.base;
-+
-+    //         inst._disable = true;
-+
-+    //         if (base[ATTR_KEY] && base[ATTR_KEY].ref) {
-+    //             base[ATTR_KEY].ref(null);
-+    //         }
-+
-+    //         if ('function' === typeof el.componentWillUnmount) {
-+    //             el.componentWillUnmount();
-+    //         }
-+    //     } else if (isNode(el) || isElement(el)) {
-+    //         base = el;
-+    //     }
-+
-+    //     discardElement(base, remove);
-+
-+    //     if (inst.__ref) {
-+    //         inst.__ref(null);
-+    //     }
-+
-+    //     for (prop in inst) {
-+    //         if (hasProp.call(inst, prop)) {
-+    //             delete inst[prop];
-+    //         }
-+    //     }
-+
-+    //     delete el[expando];
-+
-+    //     if ('function' === typeof el.componentDidUnmount) {
-+    //         el.componentDidUnmount();
-+    //     }
-+    // }
 +
      function unmountComponent(component, remove) {
 -        if (options.beforeUnmount) options.beforeUnmount(component);
@@ -1041,7 +961,7 @@
      }
      var options = {};
      var stack = [];
-@@ -411,12 +856,12 @@
+@@ -411,12 +776,12 @@
      var toLowerCase = function(s) {
          return lcCache[s] || (lcCache[s] = s.toLowerCase());
      };
@@ -1056,7 +976,7 @@
      var NON_DIMENSION_PROPS = {
          boxFlex: 1,
          boxFlexGroup: 1,
-@@ -450,8 +895,9 @@
+@@ -450,8 +815,9 @@
      var nodes = {};
      var mounts = [];
      var diffLevel = 0;
@@ -1067,7 +987,7 @@
      extend(Component.prototype, {
          linkState: function(key, eventPath) {
              var c = this._linkedStates || (this._linkedStates = {});
-@@ -459,9 +905,13 @@
+@@ -459,9 +825,13 @@
          },
          setState: function(state, callback) {
              var s = this.state;
@@ -1083,7 +1003,7 @@
              enqueueRender(this);
          },
          forceUpdate: function() {
-@@ -475,5 +925,5 @@
+@@ -475,5 +845,5 @@
      exports.render = render;
      exports.rerender = rerender;
      exports.options = options;
