@@ -13,13 +13,15 @@
   "dependencies": {
     "express": "^4.14.0",
     "lodash": "^4.13.1",
-    "log4js": "^0.6.37"
+    "log4js": "^0.6.37",
+    "mkdirp": "^0.5.1",
+    "request": "^2.78.0"
   },
   "main": "build.js",
   "license": "MIT",
   "devDependencies": {
     "anyspawn": "^1.0.9",
-    "babel-preset-react": "^6.11.1",
+    "babel-preset-react": "^6.16.0",
     "chai": "^3.5.0",
     "coffee-script": "^1.11.1",
     "coffee-script-brunch": "^2.0.0",
@@ -36,7 +38,6 @@
     "requirejs": "^2.2.0",
     "sass-brunch": "^2.6.3",
     "umd-builder": "^2.7.3",
-    "which": "^1.2.11",
-    "yargs": "^4.8.0"
+    "which": "^1.2.11"
   }
 }
