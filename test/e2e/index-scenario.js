@@ -1,6 +1,6 @@
 var config = require('../protractor-conf').config;
 
-addScenario('Index', function scenario(build, languge) {
+expando.addScenario('Index', function scenario(build, languge) {
     'use strict';
 
     var url = config.baseUrl + build + '/' + languge + '/home/home/index',
@@ -9,8 +9,8 @@ addScenario('Index', function scenario(build, languge) {
     return function() {
         beforeAll(function() {
             browser.driver.get(url);
-            waitRender();
-            initTranslation(languge, [
+            expando.waitRender();
+            expando.initTranslation(languge, [
                 require('../../public/node_modules/umd-core/src/resources'),
                 require('../../public/node_modules/umd-core/src/validation/resources'),
                 require('../../public/node_modules/configs/resources')

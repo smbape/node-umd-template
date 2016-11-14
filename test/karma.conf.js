@@ -4,9 +4,13 @@ module.exports = function(config) {
         basePath: '../',
 
         files: [
-            'test/unit/test-main.js',
-            {pattern: 'test/unit/**/*-test.js', included: false},
-            {pattern: 'public/**/*.js', included: false}
+            'test/unit/test-main.js', {
+                pattern: 'test/**/*-test.js',
+                included: false
+            }, {
+                pattern: 'public/**/*.js',
+                included: false
+            }
         ],
 
         autoWatch: true,

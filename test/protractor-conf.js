@@ -136,12 +136,15 @@ function onPrepare() {
     _.extend(global, {
         pathBrowserify: require('../public/node_modules/umd-core/src/path-browserify'),
         depsLoader: require('../public/node_modules/umd-core/src/depsLoader'),
-        initTranslation: initTranslation,
-        addScenario: addScenario,
-        waitTimeout: waitTimeout,
-        waitRender: waitRender,
-        waitRouteChangeSuccess: waitRouteChangeSuccess,
-        setInputValue: setInputValue
+        expando: {
+            initTranslation: initTranslation,
+            addScenario: addScenario,
+            waitTimeout: waitTimeout,
+            waitRender: waitRender,
+            waitRouteChangeSuccess: waitRouteChangeSuccess,
+            setInputValue: setInputValue,
+            getValue: getValue
+        }
     });
 }
 
@@ -213,11 +216,15 @@ function addScenario(name, fn) {
 }
 
 function waitTimeout(ms) {
-    return flow.execute(function() {
-        var deferred = protractor.promise.defer();
+    var deferred = protractor.promise.defer();
+    var promise = deferred.promise;
+    flow.execute(function() {
         setTimeout(deferred.fulfill.bind(deferred), ms);
-        return deferred.promise;
+        return promise;
     });
+    return function() {
+        return promise;
+    };
 }
 
 function waitRender(prevUrl, nextUrl) {
@@ -266,6 +273,25 @@ function _waitRouteChangeSuccess(prevUrl, nextUrl) {
     }
 }
 
+function getValue(elem) {
+    return new Promise(function(resolve, reject) {
+        browser.executeAsyncScript(function(elem) {
+            // jQuery.fn.val
+            var callback = arguments[arguments.length - 1];
+            var ret = elem.value;
+            if ('string' === typeof ret) {
+                ret = ret.replace(/\r/g, '');
+            } else {
+                ret == null ? '' : ret;
+            }
+
+            callback(ret);
+        }, elem).then(function(value) {
+            resolve(value);
+        });
+    });
+}
+
 /**
  * SendKeys intermittently inserts incorrect text on IE only
  * https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/3699
@@ -276,8 +302,8 @@ function _waitRouteChangeSuccess(prevUrl, nextUrl) {
 function setInputValue(input, value) {
     return new Promise(function(resolve, reject) {
         input.clear();
-        input.sendKeys(value).then(function() {
-            return input.getAttribute('value');
+        input.sendKeys(value).then(waitTimeout(1)).then(function() {
+            return getValue(input);
         }).then(function(res) {
             if (res !== value) {
                 return setInputValue(input, value).then(resolve);
