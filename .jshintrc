@@ -43,7 +43,7 @@
     "debug": true, // true: Allow debugger statements e.g. browser breakpoints.
     "eqnull": true, // true: Tolerate use of `== null`
     // "es5": true, // true: Allow ES5 syntax (ex: getters and setters)
-    // "esnext": false, // true: Allow ES.next (ES6) syntax (ex: `const`)
+    "esnext": true, // true: Allow ES.next (ES6) syntax (ex: `const`)
     // "moz": false, // true: Allow Mozilla specific syntax (extends and overrides esnext features)
     // // (ex: `for each`, multiple try/catch, function expression…)
     // "evil": false, // true: Tolerate use of `eval` and `new Function()`
@@ -75,7 +75,7 @@
     // "jquery": false, // jQuery
     // "mocha": true, // Mocha
     // "mootools": false, // MooTools
-    "node": false, // Node.js
+    // "node": false, // Node.js
     // "nonstandard": false, // Widely adopted globals (escape, unescape, etc)
     // "phantom": false, // PhantomJS
     // "prototypejs": false, // Prototype and Scriptaculous
@@ -94,10 +94,10 @@
         "Modernizr": false,
         "depsLoader": false,
         "define": false,
-        "global": false,
+        "require": false,
         "module": false,
-        "process": false,
-        "require": false
+        "global": false,
+        "process": false
     },
 
     "overrides": {

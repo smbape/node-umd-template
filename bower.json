@@ -22,7 +22,7 @@
     "material-design-lite": "^1.1.1",
     "moment": "^2.11.1",
     "qs": "git+https://github.com/hapijs/qs#^6.2.1",
-    "react": "^15.2.1",
+    "react": "^15.3.2",
     "umd-core": "^1.4.1"
   },
   "overrides": {

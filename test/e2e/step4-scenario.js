@@ -1,6 +1,6 @@
 var config = require('../protractor-conf').config;
 
-addScenario('Step4', function scenario(build, languge) {
+expando.addScenario('Step4', function scenario(build, languge) {
     'use strict';
 
     var url = config.baseUrl + build + '/' + languge + '/home/home/step4',
@@ -9,8 +9,8 @@ addScenario('Step4', function scenario(build, languge) {
     return function() {
         beforeAll(function() {
             browser.driver.get(url);
-            waitRender();
-            initTranslation(languge, [
+            expando.waitRender();
+            expando.initTranslation(languge, [
                 require('../../public/node_modules/umd-core/src/resources'),
                 require('../../public/node_modules/umd-core/src/validation/resources'),
                 require('../../public/node_modules/configs/resources')
@@ -38,7 +38,7 @@ addScenario('Step4', function scenario(build, languge) {
             ]);
 
             // modifying another input should preserve error
-            setInputValue(firstName, 'Liquid');
+            expando.setInputValue(firstName, 'Liquid');
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
                 translate('error.email')
@@ -53,7 +53,7 @@ addScenario('Step4', function scenario(build, languge) {
             ]);
 
             // attribute error should disappear 
-            setInputValue(email, "ipsum@lorem.com");
+            expando.setInputValue(email, "ipsum@lorem.com");
             expect(errorList.count()).toBe(1);
             expect(getErrorList()).toEqual([
                 translate('error.email')
@@ -78,5 +78,5 @@ addScenario('Step4', function scenario(build, languge) {
             alertDialog.accept();
             expect(errorList.count()).toBe(0);
         });
-    }
+    };
 });

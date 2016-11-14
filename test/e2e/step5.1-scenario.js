@@ -1,6 +1,6 @@
 var config = require('../protractor-conf').config;
 
-addScenario('Step5.1', function scenario(build, languge) {
+expando.addScenario('Step5.1', function scenario(build, languge) {
     'use strict';
 
     var url = config.baseUrl + build + '/' + languge + '/home/step5/list-user',
@@ -9,15 +9,15 @@ addScenario('Step5.1', function scenario(build, languge) {
     return function() {
         beforeAll(function() {
             browser.driver.get(url);
-            waitRender();
-            initTranslation(languge, [
+            expando.waitRender();
+            expando.initTranslation(languge, [
                 require('../../public/node_modules/umd-core/src/resources'),
                 require('../../public/node_modules/umd-core/src/validation/resources'),
                 require('../../public/node_modules/configs/resources')
             ], function(err, t) {
                 translate = t;
             });
-            waitTimeout(300) // wait 300 ms for remote data display
+            expando.waitTimeout(300); // wait 300 ms for remote data display
         });
 
         it('should have a create user button', function() {
@@ -55,10 +55,10 @@ addScenario('Step5.1', function scenario(build, languge) {
 
             // Edit user at index 1
             editButtons.get(1).click();
-            waitRouteChangeSuccess(url);
+            expando.waitRouteChangeSuccess(url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             // Should have correct labels
             expect(element.all(by.tagName('label')).map(getText)).toEqual([
@@ -68,7 +68,7 @@ addScenario('Step5.1', function scenario(build, languge) {
             ]);
 
             // Should have correct values
-            expect(element.all(by.css('input[type=text]')).map(getValue)).toEqual(['Mikasa', 'ACKERMAN', '3']);
+            expect(element.all(by.css('input[type=text]')).map(expando.getValue)).toEqual(['Mikasa', 'ACKERMAN', '3']);
 
             // Should have correct buttons
             var buttons = element.all(by.css('#content button'));
@@ -80,10 +80,10 @@ addScenario('Step5.1', function scenario(build, languge) {
 
             // click on cancel should return to url
             buttons.get(1).click();
-            waitRouteChangeSuccess(null, url);
+            expando.waitRouteChangeSuccess(null, url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             expectCurrentUrl(url);
         });
@@ -93,13 +93,13 @@ addScenario('Step5.1', function scenario(build, languge) {
             expect(createButton.count()).toBe(1);
 
             createButton.get(0).click();
-            waitRouteChangeSuccess(url);
+            expando.waitRouteChangeSuccess(url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             // Should have correct values
-            expect(element.all(by.css('input[type=text]')).map(getValue)).toEqual(['', '', '']);
+            expect(element.all(by.css('input[type=text]')).map(expando.getValue)).toEqual(['', '', '']);
 
             var inputs = {
                 firstName: element(by.css('[data-bind-attr=firstName]')),
@@ -122,17 +122,17 @@ addScenario('Step5.1', function scenario(build, languge) {
 
             // click on save should return to original page
             buttons.get(1).click();
-            waitRouteChangeSuccess(null, url);
+            expando.waitRouteChangeSuccess(null, url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             expectCurrentUrl(url);
 
             var users = element.all(by.className('user'));
             expect(users.count()).toBe(5);
 
-            var buttons = getActionButtons();
+            buttons = getActionButtons();
             expect(getUsersAttributes(users)).toEqual([
                 ['Solid', 'SNAKE', '1', buttons],
                 ['Mikasa', 'ACKERMAN', '3', buttons],
@@ -148,7 +148,7 @@ addScenario('Step5.1', function scenario(build, languge) {
             users.get(4).element(by.className('delete-user')).click();
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             var buttons = getActionButtons();
             expect(getUsersAttributes(users)).toEqual([
@@ -165,13 +165,13 @@ addScenario('Step5.1', function scenario(build, languge) {
 
             // Edit user at index 1
             editButtons.get(1).click();
-            waitRouteChangeSuccess(url);
+            expando.waitRouteChangeSuccess(url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             // Should have correct values
-            expect(element.all(by.css('input[type=text]')).map(getValue)).toEqual(['Mikasa', 'ACKERMAN', '3']);
+            expect(element.all(by.css('input[type=text]')).map(expando.getValue)).toEqual(['Mikasa', 'ACKERMAN', '3']);
 
             var inputs = {
                 firstName: element(by.css('[data-bind-attr=firstName]')),
@@ -188,17 +188,17 @@ addScenario('Step5.1', function scenario(build, languge) {
             // click on save should return to original page
             var buttons = element.all(by.css('#content button'));
             buttons.get(2).click();
-            waitRouteChangeSuccess(null, url);
+            expando.waitRouteChangeSuccess(null, url);
 
             // wait 300 ms for remote data display
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             expectCurrentUrl(url);
 
             var users = element.all(by.className('user'));
             expect(users.count()).toBe(4);
 
-            var buttons = getActionButtons();
+            buttons = getActionButtons();
             expect(getUsersAttributes(users)).toEqual([
                 ['Solid', 'SNAKE', '1', buttons],
                 ['Nelson', 'MANDELA', '95', buttons],
@@ -206,21 +206,16 @@ addScenario('Step5.1', function scenario(build, languge) {
                 ['Wade', 'WILSON', '2', buttons]
             ]);
         });
-
-    }
+    };
 
     function setInputs(inputs, attributes) {
         for (var prop in attributes) {
-            setInputValue(inputs[prop], attributes[prop]);
+            expando.setInputValue(inputs[prop], attributes[prop]);
         }
     }
 
     function getText(elm) {
         return elm.getText();
-    }
-
-    function getValue(elm) {
-        return elm.getAttribute('value');
     }
 
     function getUsersAttributes(users) {
