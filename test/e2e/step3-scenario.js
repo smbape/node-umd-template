@@ -1,6 +1,6 @@
 var config = require('../protractor-conf').config;
 
-addScenario('Step3', function scenario(build, languge) {
+expando.addScenario('Step3', function scenario(build, languge) {
     'use strict';
 
     var url = config.baseUrl + build + '/' + languge + '/home/home/step3',
@@ -9,8 +9,8 @@ addScenario('Step3', function scenario(build, languge) {
     return function() {
         beforeAll(function() {
             browser.driver.get(url);
-            waitRender();
-            initTranslation(languge, [
+            expando.waitRender();
+            expando.initTranslation(languge, [
                 require('../../public/node_modules/umd-core/src/resources'),
                 require('../../public/node_modules/umd-core/src/validation/resources'),
                 require('../../public/node_modules/configs/resources')
@@ -21,23 +21,23 @@ addScenario('Step3', function scenario(build, languge) {
 
         it('should filter the phone list as a user types into the search box', function() {
             // wait 300 ms to leave time for fetching
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             var phoneList = element.all(by.css('.phones .name'));
             var query = element(by.css('input'));
 
             expect(phoneList.count()).toBe(4);
 
-            setInputValue(query, 'nexus');
+            expando.setInputValue(query, 'nexus');
             expect(phoneList.count()).toBe(1);
 
-            setInputValue(query, 'motorola');
+            expando.setInputValue(query, 'motorola');
             expect(phoneList.count()).toBe(3);
         });
 
         it('should be possible to control phone order via the drop down select box', function() {
             // wait 300 ms to leave time for fetching
-            waitTimeout(300);
+            expando.waitTimeout(300);
 
             var phoneNameColumn = element.all(by.css('.phones .name'));
             var query = element(by.css('input'));
@@ -48,7 +48,7 @@ addScenario('Step3', function scenario(build, languge) {
                 });
             }
 
-            setInputValue(query, 'tablet'); //let's narrow the dataset to make the test assertions shorter
+            expando.setInputValue(query, 'tablet'); //let's narrow the dataset to make the test assertions shorter
 
             expect(getNames()).toEqual([
                 "Motorola XOOM\u2122 with Wi-Fi",
@@ -68,5 +68,5 @@ addScenario('Step3', function scenario(build, languge) {
             ]);
         });
 
-    }
+    };
 });
