@@ -21,8 +21,10 @@
     "marked": "^0.3.5",
     "material-design-lite": "^1.1.1",
     "moment": "^2.11.1",
+    "preact": "^6.4.0",
+    "preact-compat": "^3.9.1",
+    "proptypes": "^0.14.3",
     "qs": "git+https://github.com/hapijs/qs#^6.2.1",
-    "react": "^15.3.2",
     "umd-core": "^1.4.1"
   },
   "overrides": {
@@ -50,14 +52,6 @@
       "main": [
         "material.js"
       ]
-    },
-    "react": {
-      "main": [
-        "react.min.js"
-      ],
-      "map": {
-        "react-dom.min.js": "react-dom"
-      }
     }
   },
   "resolutions": {

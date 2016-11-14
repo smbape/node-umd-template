@@ -18,6 +18,8 @@ exports.config = _.merge config,
         map:
             '*':
                 underscore: 'lodash'
+                react: 'preact-compat'
+                'react-dom': 'preact-compat'
 
     plugins:
         babel:

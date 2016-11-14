@@ -3,7 +3,7 @@
   "description": "UMD template projects",
   "version": "0.0.0",
   "scripts": {
-    "postinstall": "node ./scripts/postinstall.js",
+    "postinstall": "node ./scripts/postinstall.js --preact",
     "test": "npm run test-unit -- --single-run && npm run test-e2e",
     "test-unit": "karma start test/karma.conf.js",
     "test-e2e": "protractor test/protractor-conf.js",
