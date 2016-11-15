@@ -22,7 +22,11 @@
   "license": "MIT",
   "devDependencies": {
     "anyspawn": "^1.0.9",
-    "babel-preset-react": "^6.16.0",
+    "babel-plugin-syntax-flow": "^6.18.0",
+    "babel-plugin-syntax-jsx": "^6.18.0",
+    "babel-plugin-transform-flow-strip-types": "^6.18.0",
+    "babel-plugin-transform-react-display-name": "^6.8.0",
+    "babel-plugin-transform-react-jsx": "^6.8.0",
     "chai": "^3.5.0",
     "coffee-script": "^1.11.1",
     "coffee-script-brunch": "^2.0.0",
