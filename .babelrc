@@ -1,10 +1,11 @@
 {
-    "presets": [
-        "react"
-    ],
     "plugins": [
         ["transform-react-jsx", {
             "pragma": "React.createElement"
-        }]
+        }],
+        "transform-flow-strip-types",
+        "syntax-flow",
+        "syntax-jsx",
+        "transform-react-display-name"
     ]
 }
