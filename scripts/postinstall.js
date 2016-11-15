@@ -7,7 +7,7 @@ var fs = require('fs'),
     anyspawn = require('anyspawn'),
     request = require('request'),
     mkdirp = require('mkdirp'),
-    _ = require('lodash'),
+    deepExtend = require('deep-extend'),
     argv = process.argv.slice(2),
     push = Array.prototype.push;
 
@@ -20,13 +20,24 @@ function postinstall() {
     var geckodriverFile = require.resolve('protractor/node_modules/webdriver-manager/built/lib/binaries/gecko_driver.js');
     var geckodriverPatch = sysPath.resolve(__dirname, '..', 'patches', 'fix_gecko_lte_0.10.0_install.patch');
 
-    var tasks = [
-        'bower install',
-        // 'bower install angular-mocks angular-loader',
-    ];
+    var tasks;
 
-    if (argv.indexOf('--preact') !== -1) {
-        push.apply(tasks, [
+    if (argv.indexOf('--preact') === -1) {
+        tasks = [
+            'bower install',
+            // 'bower install angular-mocks angular-loader',
+        ];
+    } else {
+        tasks = [
+            updateBowerJSON({
+                dependencies: {
+                    "preact": undefined,
+                    "preact-compat": undefined,
+                    "proptypes": undefined,
+                }
+            }),
+            'bower install',
+            // 'bower install angular-mocks angular-loader',
             installBowerFile({
                 name: 'preact',
                 main: 'preact.js',
@@ -58,7 +69,7 @@ function postinstall() {
                     "proptypes": "^0.14.3",
                 }
             })
-        ]);
+        ];
     }
 
     push.apply(tasks, [
@@ -67,7 +78,10 @@ function postinstall() {
         'npm run update-webdriver'
     ]);
 
-    anyspawn.spawnSeries(tasks, function(err) {
+    anyspawn.spawnSeries(tasks, {
+        prompt: anyspawn.defaults.prompt,
+        stdio: 'inherit'
+    }, function(err) {
         if (err) {
             throw err;
         }
@@ -121,11 +135,11 @@ function updateBowerJSON(config) {
                 return next(err);
             }
 
-            config = _.merge(JSON.parse(data.toString()), config);
+            config = deepExtend(JSON.parse(data.toString()), config);
             orderProperty(config, 'dependencies');
             orderProperty(config, 'overrides');
 
-            fs.writeFile(bowerFile, JSON.stringify(config, null, 2));
+            fs.writeFile(bowerFile, JSON.stringify(config, null, 2), next);
         });
     };
 }
