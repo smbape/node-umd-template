@@ -1,0 +1,112 @@
+--- preact-compat.ori.js	2016-11-12 13:15:30.404000700 +0100
++++ preact-compat.js	2016-11-12 13:41:45.665450800 +0100
+@@ -4,6 +4,8 @@
+ 	(global.preactCompat = factory(global.PropTypes,global.preact));
+ }(this, (function (PropTypes,preact) {
+ 
++var expando = preact.expando;
++
+ PropTypes = 'default' in PropTypes ? PropTypes['default'] : PropTypes;
+ 
+ var version = '15.1.0'; // trick libraries to think we are react
+@@ -136,9 +138,10 @@
+ 	}
+ 
+ 	var out = preact.render(vnode, parent, prev);
++	if (out[expando]._component) out[expando]._component._reactInternalInstance = { _currentElement: vnode};
+ 	if (parent) parent._preactCompatRendered = out;
+ 	if (typeof callback==='function') callback();
+-	return out && out._component || out.base;
++	return out && out[expando]._component || out[expando].base;
+ }
+ 
+ 
+@@ -152,7 +155,7 @@
+ };
+ 
+ function renderSubtreeIntoContainer(parentComponent, vnode, container, callback) {
+-	var wrap = preact.h(ContextProvider, { context: parentComponent.context }, vnode);
++	var wrap = preact.h(ContextProvider, { context: parentComponent[expando].context }, vnode);
+ 	var c = render$1$1(wrap, container);
+ 	if (callback) callback(c);
+ 	return c;
+@@ -286,6 +289,12 @@
+ 
+ 	applyEventNormalization(vnode);
+ 
++	if (currentComponent) {
++		vnode._owner = {_instance: currentComponent};
++	} else {
++		vnode._owner = null;
++	}
++
+ 	return vnode;
+ }
+ 
+@@ -311,11 +320,19 @@
+ 
+ 
+ function createStringRefProxy(name, component) {
+-	return component._refProxies[name] || (component._refProxies[name] = function (resolved) {
++	if (!component.hasOwnProperty('refs')) {
++		component.refs = {};
++	}
++
++	if (!component[expando].hasOwnProperty('_refProxies')) {
++		component[expando]._refProxies = {};
++	}
++
++	return component[expando]._refProxies[name] || (component[expando]._refProxies[name] = function (resolved) {
+ 		if (component && component.refs) {
+ 			component.refs[name] = resolved;
+ 			if (resolved===null) {
+-				delete component._refProxies[name];
++				delete component[expando]._refProxies[name];
+ 				component = null;
+ 			}
+ 		}
+@@ -369,7 +386,7 @@
+ }
+ 
+ 
+-var findDOMNode = function (component) { return component && component.base || component; };
++var findDOMNode = function (component) { return component && component[expando].base || component; };
+ 
+ 
+ function F(){}
+@@ -521,8 +538,6 @@
+ function Component$1(props, context, opts) {
+ 	preact.Component.call(this, props, context);
+ 	if (this.getInitialState) this.state = this.getInitialState();
+-	this.refs = {};
+-	this._refProxies = {};
+ 	if (opts!==BYPASS_HOOK) {
+ 		newComponentHook.call(this, props, context);
+ 	}
+@@ -545,11 +560,11 @@
+ 	},
+ 
+ 	getDOMNode: function getDOMNode() {
+-		return this.base;
++		return this[expando].base;
+ 	},
+ 
+ 	isMounted: function isMounted() {
+-		return !!this.base;
++		return !!this[expando].base;
+ 	}
+ });
+ 
+@@ -580,10 +595,10 @@
+ 	unmountComponentAtNode: unmountComponentAtNode,
+ 	Component: Component$1,
+ 	PureComponent: PureComponent,
+-	unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer
++	unstable_renderSubtreeIntoContainer: renderSubtreeIntoContainer,
++	expando: expando
+ };
+ 
+ return index;
+ 
+ })));
+-//# sourceMappingURL=preact-compat.js.map
