@@ -1,8 +1,4 @@
 <%
-    var require = root.require,
-        __dirname = root.__dirname,
-        __filename = root.__filename;
-
     var fs = require('fs'),
         sysPath = require('path'),
         isAppBuild = root.build === 'app';
@@ -43,7 +39,6 @@
                 function onStart(evt) {
                     document.removeEventListener('start', onStart);
                     console.log('ready', timerDiff());
-                    // alert(timerDiff()[1]);
                 }
 
                 function onRender(evt) {
@@ -51,7 +46,6 @@
                     if (!window.rendered) {
                         window.rendered = true;
                         console.log('Initial onRouteChangeSuccess took', timerDiff());
-                        // alert(timerDiff()[1]);
                     }
                     console.log('onRouteChangeSuccess');
                 }

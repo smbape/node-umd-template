@@ -1,6 +1,6 @@
 var config = require('../protractor-conf').config;
 
-addScenario('Step1', function scenario(build, languge) {
+expando.addScenario('Step1', function scenario(build, languge) {
     'use strict';
 
     var url = config.baseUrl + build + '/' + languge + '/home/home/step1',
@@ -9,8 +9,8 @@ addScenario('Step1', function scenario(build, languge) {
     return function() {
         beforeAll(function() {
             browser.driver.get(url);
-            waitRender();
-            initTranslation(languge, [
+            expando.waitRender();
+            expando.initTranslation(languge, [
                 require('../../public/node_modules/umd-core/src/resources'),
                 require('../../public/node_modules/umd-core/src/validation/resources'),
                 require('../../public/node_modules/configs/resources')
@@ -25,12 +25,12 @@ addScenario('Step1', function scenario(build, languge) {
 
             expect(phoneList.count()).toBe(3);
 
-            setInputValue(query, 'nexus');
+            expando.setInputValue(query, 'nexus');
             expect(phoneList.count()).toBe(1);
 
-            setInputValue(query, 'motorola');
+            expando.setInputValue(query, 'motorola');
             expect(phoneList.count()).toBe(2);
         });
 
-    }
+    };
 });
