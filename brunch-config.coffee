@@ -1,9 +1,9 @@
-merge = require 'lodash/merge'
+_ = require 'lodash'
 sysPath = require 'path'
 {matcher, config} = require 'umd-builder/lib/brunch-config'
 
-coreLibFiles = matcher ['bower_components/umd-core/lib/**']
-ignore = (path)-> config.conventions.vendor(path) || coreLibFiles.test path
+browserifyFile = matcher ['**-browserify.js$', 'bower_components/umd-core/lib/**']
+ignore = (path)-> config.conventions.vendor(path) || browserifyFile.test path
 
 config.compilers.unshift require('umd-builder/lib/compilers/babel')
 config.compilers.push.apply config.compilers, [
@@ -23,16 +23,17 @@ isVendor = config.conventions.vendor
 platform = require('os').platform()
 
 # https://github.com/brunch/brunch/blob/2.8.2/docs/config.md
-exports.config = merge config,
+exports.config = _.merge config,
 
-    # http://requirejs.org/docs/api.html#config-map
     requirejs:
         waitSeconds : 30 # prevent slow networks from breaking the application
+
+        # http://requirejs.org/docs/api.html#config-map
         map:
             '*':
                 underscore: 'lodash'
-                react: 'preact-compat'
-                'react-dom': 'preact-compat'
+                react: 'vrdom-compat'
+                'react-dom': 'vrdom-compat'
 
         deps: [
             "auto-reload-brunch/vendor/auto-reload"
@@ -58,11 +59,7 @@ exports.config = merge config,
             pretransform: [
                 require('umd-builder/lib/spTransform')
             ]
-
             ignore: ignore
-
-        amd:
-            eslint: true
 
         eslint:
             config:
@@ -71,7 +68,6 @@ exports.config = merge config,
                 globals: [
                     "define:false"
                 ]
-
             ignore: ignore
 
             overrides:
@@ -97,6 +93,25 @@ exports.config = merge config,
                             "varsIgnorePattern": "\\b(?:factory|deps|#{basename})\\b"
                         }]
                     }
+
+        amd:
+            eslint: true
+            factories:
+                freact: (plugin, modulePath, data, parsed)->
+                    [locals, name, args, head, declaration, body] = parsed
+
+                    """
+                    #{head}
+                    deps.unshift({amd: 'vrdom-compat', common: '!vrdomCompat'}, {amd: 'vrdom-compat', common: '!vrdomCompat'});
+                    
+                    function factory(require, React, ReactDOM) {
+                        /*jshint validthis: true */
+
+                        #{declaration}#{args.join(', ')}#{body}
+
+                        return freact.apply(this, Array.prototype.slice.call(arguments, 3));
+                    }
+                    """
 
         autoReload:
             enabled:

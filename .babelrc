@@ -6,6 +6,9 @@
         "transform-flow-strip-types",
         "syntax-flow",
         "syntax-jsx",
-        "transform-react-display-name"
+        ["./bower_components/vrdom/babel-plugin/transform-react-display-name", {
+            "pragma": "React.createClass",
+            "value": "displayName"
+        }]
     ]
 }
