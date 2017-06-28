@@ -1,0 +1,30 @@
+--- bower_components/preact/preact.js.orig
++++ bower_components/preact/preact.js
+@@ -1,4 +1,6 @@
+-!function() {
++!function(global, factory) {
++    'object' == typeof exports && 'undefined' != typeof module ? factory(exports) : 'function' == typeof define && define.amd ? define([ 'exports' ], factory) : factory(global.preact = global.preact || {});
++}(this, function(exports) {
+     'use strict';
+     function VNode() {}
+     function h(nodeName, attributes) {
+@@ -386,7 +388,7 @@
+         },
+         render: function() {}
+     });
+-    var preact = {
++    extend(exports, {
+         h: h,
+         createElement: h,
+         cloneElement: cloneElement,
+@@ -394,7 +396,6 @@
+         render: render,
+         rerender: rerender,
+         options: options
+-    };
+-    if ('undefined' != typeof module) module.exports = preact; else self.preact = preact;
+-}();
++    });
++});
+ //# sourceMappingURL=preact.js.map
+\ Pas de fin de ligne à la fin du fichier
