@@ -18,7 +18,6 @@
     "jquery": "^3.1.0",
     "jquery-mockjax": "^2.1.0",
     "lodash": "^4.14.1",
-    "marked": "^0.3.5",
     "material-design-lite": "^1.1.1",
     "moment": "^2.11.1",
     "qs": "git+https://github.com/hapijs/qs#^6.2.1",
