@@ -20,9 +20,9 @@
     "lodash": "^4.14.1",
     "material-design-lite": "^1.1.1",
     "moment": "^2.11.1",
-    "preact": "^6.4.0",
-    "preact-compat": "^3.9.1",
-    "proptypes": "^0.14.3",
+    "preact": "^8.1.0",
+    "preact-compat": "^3.16.0",
+    "proptypes": "^1.1.0",
     "qs": "git+https://github.com/hapijs/qs#^6.2.1",
     "umd-core": "^1.4.1"
   },
