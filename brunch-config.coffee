@@ -128,9 +128,6 @@ exports.config = _.merge config,
         hostname: '127.0.0.1'
         port: 3330
 
-    paths:
-        watched: [ 'app', 'vendor' ]
-
     overrides:
         production:
             requirejs:
