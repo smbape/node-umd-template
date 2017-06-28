@@ -1,0 +1,11 @@
+--- bower_components/preact-compat/preact-compat.js.orig	2017-06-28 09:36:47.808710000 +0200
++++ bower_components/preact-compat/preact-compat.js	2017-06-28 09:44:04.938522300 +0200
+@@ -1,6 +1,6 @@
+ (function (global, factory) {
+-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('prop-types'), require('preact')) :
+-	typeof define === 'function' && define.amd ? define(['prop-types', 'preact'], factory) :
++	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('proptypes'), require('preact')) :
++	typeof define === 'function' && define.amd ? define(['proptypes', 'preact'], factory) :
+ 	(global.preactCompat = factory(global.PropTypes,global.preact));
+ }(this, (function (PropTypes,preact) {
+ 
