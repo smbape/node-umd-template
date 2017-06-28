@@ -34,36 +34,35 @@ function postinstall() {
                 }
             }),
             'bower install',
-            // 'bower install angular-mocks angular-loader',
             installBowerFile({
                 name: 'preact',
                 main: 'preact.js',
-                version: '6.4.0',
-                cdn: 'https://unpkg.com/preact@6.4.0',
+                version: '8.1.0',
+                cdn: 'https://unpkg.com/preact@8.1.0',
                 dependencies: {}
-            }, sysPath.resolve(__dirname, '..', 'patches', 'preact_6.4.0.patch')),
+            }, sysPath.resolve(__dirname, '..', 'patches', 'preact_8.1.0.patch')),
             installBowerFile({
                 name: 'proptypes',
                 main: 'proptypes.js',
-                version: '0.14.3',
-                cdn: 'https://unpkg.com/proptypes@0.14.3',
+                version: '1.1.0',
+                cdn: 'https://unpkg.com/proptypes@1.1.0',
                 dependencies: {}
-            }, sysPath.resolve(__dirname, '..', 'patches', 'proptypes_0.14.3.patch')),
+            }, sysPath.resolve(__dirname, '..', 'patches', 'proptypes_1.1.0.patch')),
             installBowerFile({
                 name: 'preact-compat',
                 main: 'preact-compat.js',
-                version: '3.9.1',
-                cdn: 'https://unpkg.com/preact-compat@3.9.1',
+                version: '3.16.0',
+                cdn: 'https://unpkg.com/preact-compat@3.16.0',
                 dependencies: {
                     preact: '*',
                     proptypes: '*'
                 }
-            }, sysPath.resolve(__dirname, '..', 'patches', 'preact-compat_3.9.1.patch')),
+            }, sysPath.resolve(__dirname, '..', 'patches', 'preact-compat_3.16.0.patch')),
             updateBowerJSON({
                 dependencies: {
-                    "preact": "^6.4.0",
-                    "preact-compat": "^3.9.1",
-                    "proptypes": "^0.14.3",
+                    "preact": "^8.1.0",
+                    "preact-compat": "^3.16.0",
+                    "proptypes": "^1.1.0",
                 }
             })
         ];
@@ -101,6 +100,10 @@ function installBowerFile(config, patch) {
             var writer = fs.createWriteStream(file);
             writer.on('error', next);
             writer.on('finish', function() {
+                if (!patch) {
+                    fs.writeFile(sysPath.join(dest, 'bower.json'), bowerFile, next);
+                    return;
+                }
                 anyspawn.exec('patch -N ' + anyspawn.quoteArg(file) + ' < ' + anyspawn.quoteArg(patch), function(err) {
                     if (err) {
                         return next(err);
