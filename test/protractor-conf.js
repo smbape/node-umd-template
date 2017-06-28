@@ -1,95 +1,128 @@
-'use strict';
-require('coffee-script').register();
-var server = require('../brunch-config').config.server;
+"use strict";
+require("coffee-script").register();
+const server = require("../brunch-config").config.server;
+const _key = Math.random().toString(36).slice(2);
 
 exports.config = {
     localSeleniumStandaloneOpts: {
+        // stdio: "inherit",
 
         // add support for Firefox 48+ using gecko driver downloaded by webdriver-manager
-        args: (function() {
+        jvmArgs: (function() {
             // ================================================================
             // From webdriver-manager/built/lib/cmds/start.js
+            // From webdriver-manager/built/lib/cmds/update.js
             // ================================================================
-            var path = require('path');
-            var os = require('os');
+            const fs = require("fs");
+            const path = require("path");
+            const semver = require("semver");
 
-            var gecko_driver_1 = require('protractor/node_modules/webdriver-manager/built/lib/binaries/gecko_driver');
-            var config_1 = require('protractor/node_modules/webdriver-manager/built/lib/config');
-            var files_1 = require('protractor/node_modules/webdriver-manager/built/lib/files');
-            var binaries = files_1.FileManager.setupBinaries();
-            var outputDir = config_1.Config.getSeleniumDir();
-            var osType = os.type();
-            return ['-Dwebdriver.gecko.driver=' + path.join(outputDir, binaries[gecko_driver_1.GeckoDriver.id].executableFilename(osType))];
+            const config_1 = require("protractor/node_modules/webdriver-manager/built/lib/config");
+            const files_1 = require("protractor/node_modules/webdriver-manager/built/lib/files");
+            const binaries = files_1.FileManager.setupBinaries();
+            const outputDir = config_1.Config.getSeleniumDir();
+
+            const binaries_1 = require("protractor/node_modules/webdriver-manager/built/lib/binaries");
+            const binary = binaries[binaries_1.GeckoDriver.id];
+
+            const json = JSON.parse(fs.readFileSync(path.join(outputDir, "gecko-response.json")).toString());
+            const versionsLookup = json.map((item, index) => {
+                return {
+                    version: item.tag_name,
+                    index: index,
+                    assets: item.assets
+                };
+            });
+
+            let latest = "";
+            const oshelper = binary.configSource.oshelper();
+            versionsLookup.forEach((item) => {
+                const version = item.version.replace("v", "");
+                const assetsArray = item.assets;
+
+                for (const asset of assetsArray) {
+                    if (asset.name.includes(oshelper)) {
+                        if (latest === "") {
+                            latest = version;
+                        } else if (semver.lt(latest, version)) {
+                            latest = version;
+                        }
+                    }
+                }
+            });
+            binary.versionCustom = "v" + latest;
+
+            const executable = path.resolve(outputDir, binary.executableFilename());
+            return ["-Dwebdriver.gecko.driver=" + executable];
         }())
     },
 
     allScriptsTimeout: 11000,
 
     specs: [
-        'e2e/**/*-scenario.js'
+        "e2e/**/*-scenario.js"
     ],
 
     multiCapabilities: [{
         'browserName': 'chrome'
     }, {
-        'browserName': 'firefox',
-        'marionette': 'true' // tell protractor to use gecko driver for firefox
-    }, ],
+        "browserName": "firefox",
+        "marionette": "true" // tell protractor to use gecko driver for firefox
+    },],
 
-    baseUrl: 'http://' + server.hostname + ':' + server.port + '/',
+    baseUrl: "http://" + server.hostname + ":" + server.port + "/",
 
-    framework: 'jasmine',
+    framework: "jasmine",
 
     jasmineNodeOpts: {
         defaultTimeoutInterval: 30000,
         isVerbose: true
     },
 
-    onPrepare: onPrepare
+    onPrepare: onPrepare,
 };
 
 // init i18n
 // should be similar to front-end i18n
-var _ = require('lodash'),
-    i18n = require('i18next'),
-    hasOwn = Object.prototype.hasOwnProperty,
+const _ = require("lodash");
+const i18n = require("i18next");
+const hasOwn = Object.prototype.hasOwnProperty;
 
-    i18nOptions = {
-        lng: 'en-GB',
-        interpolation: {
-            prefix: '{{',
-            suffix: '}}',
-            escapeValue: false,
-            unescapeSuffix: 'HTML'
-        },
-        returnedObjectHandler: function(key, value, options) {
-            var choice, i, j, keys, len, num;
-            if (!hasOwn.call(options, 'choice') || 'number' !== typeof options.choice || !hasOwn.call(value, 'choice') || 'object' !== typeof value.choice) {
-                return "key '" + this.ns[0] + ":" + key + " (" + this.lng + ")' returned an object instead of string.";
-            }
-            keys = Object.keys(value.choice).sort(intComparator);
-            choice = keys[0];
-            value = options.choice;
-            for (i = j = 0, len = keys.length; j < len; i = ++j) {
-                num = keys[i];
-                num = parseInt(num, 10);
-                if (value >= num) {
-                    choice = keys[i];
-                }
-            }
-            return i18n.t(key + ".choice." + choice, options);
+const i18nOptions = {
+    lng: "en-GB",
+    interpolation: {
+        prefix: "{{",
+        suffix: "}}",
+        escapeValue: false,
+        unescapeSuffix: "HTML"
+    },
+    returnedObjectHandler: function(key, value, options) {
+        if (!hasOwn.call(options, "choice") || "number" !== typeof options.choice || !hasOwn.call(value, "choice") || "object" !== typeof value.choice) {
+            return "key '" + this.ns[0] + ":" + key + " (" + this.lng + ")' returned an object instead of string.";
         }
-    },
+        const keys = Object.keys(value.choice).sort(intComparator);
+        let choice = keys[0];
 
-    localeMap = {
-        en: 'en-GB',
-        fr: 'fr-FR'
-    },
+        value = options.choice;
+        for (let i = 0, len = keys.length; i < len; i++) {
+            const num = parseInt(keys[i], 10);
+            if (value >= num) {
+                choice = keys[i];
+            }
+        }
+        return i18n.t(key + ".choice." + choice, options);
+    }
+};
 
-    flow;
+const localeMap = {
+    en: "en-GB",
+    fr: "fr-FR"
+};
+
+let flow;
 
 // https://jasmine.github.io/2.0/custom_matcher.html
-var customMatchers = {
+const customMatchers = {
     // in Firefox 49.0.2, using Gecko Driver 0.9, getAttribute('href') returns the attributes as it is setted ex: /web/fr/...
     // in Chrome 54, using Chrome Driver 2.25, getAttribute('href') returns a.href ex: http://127.0.0.1:3330/web/fr/...
     // toBeUrl returns true if href === '/' + url or base + url
@@ -102,14 +135,13 @@ var customMatchers = {
                     expected = [expected];
                 }
 
-                var url = expected[0],
-                    base = expected[1];
+                const url = expected[0];
+                const base = expected[1];
 
-                var message,
-                    pass;
+                let message, pass;
 
-                pass = util.equals(actual, '/' + url, customEqualityTesters);
-                if (!pass && base !== '/') {
+                pass = util.equals(actual, "/" + url, customEqualityTesters);
+                if (!pass && base !== "/") {
                     pass = util.equals(actual, base + url, customEqualityTesters);
                 }
 
@@ -134,8 +166,8 @@ function onPrepare() {
 
     // expose needed globals
     _.extend(global, {
-        pathBrowserify: require('../public/node_modules/umd-core/src/path-browserify'),
-        depsLoader: require('../public/node_modules/umd-core/src/depsLoader'),
+        pathBrowserify: require("../public/node_modules/umd-core/src/path-browserify"),
+        depsLoader: require("../public/node_modules/umd-core/src/depsLoader"),
         expando: {
             initTranslation: initTranslation,
             addScenario: addScenario,
@@ -149,7 +181,7 @@ function onPrepare() {
 }
 
 function updateRessources(resources, __resources) {
-    if ('function' === typeof resources) {
+    if ("function" === typeof resources) {
         resources = resources(i18nOptions);
     }
 
@@ -163,16 +195,16 @@ function updateRessources(resources, __resources) {
  * @param  {Function} done      called on initilization with (err, t)
  */
 function initTranslation(lng, resources, done) {
-    var __resources = {};
+    const __resources = {};
 
     if (Array.isArray(resources)) {
-        for (var i = 0, len = resources.length; i < len; i++) {
+        for (let i = 0, len = resources.length; i < len; i++) {
             updateRessources(resources[i], __resources);
         }
     }
 
-    var options = _.defaults({
-        lng: localeMap[lng] || 'en-GB',
+    const options = _.defaults({
+        lng: localeMap[lng] || "en-GB",
         resources: __resources
     }, i18nOptions);
 
@@ -180,17 +212,17 @@ function initTranslation(lng, resources, done) {
 }
 
 function addScenario(name, fn) {
-    var builds = ['web', 'app'],
-        languages = ['en', 'fr'],
-        leni = builds.length,
-        lenj = languages.length,
-        build, language, i, j, specName;
+    const builds = ["web", 'app'];
+    const languages = ["en", 'fr'];
+    const leni = builds.length;
+    const lenj = languages.length;
+    let build, language, i, j, specName;
 
     for (i = 0; i < leni; i++) {
         build = builds[i];
         for (j = 0; j < lenj; j++) {
             language = languages[j];
-            specName = require('util').inspect({
+            specName = require("util").inspect({
                 name: name,
                 build: build,
                 language: language
@@ -203,7 +235,7 @@ function addScenario(name, fn) {
     }
 
     function spec(fn, build, language) {
-        var scenario = fn(build, language);
+        const scenario = fn(build, language);
 
         return function() {
             beforeEach(function() {
@@ -216,8 +248,8 @@ function addScenario(name, fn) {
 }
 
 function waitTimeout(ms) {
-    var deferred = protractor.promise.defer();
-    var promise = deferred.promise;
+    const deferred = protractor.promise.defer();
+    const promise = deferred.promise;
     flow.execute(function() {
         setTimeout(deferred.fulfill.bind(deferred), ms);
         return promise;
@@ -265,10 +297,10 @@ function _waitRouteChangeSuccess(prevUrl, nextUrl) {
         }
     }
 
-    document.addEventListener('onRouteChangeSuccess', onRender);
+    document.addEventListener("onRouteChangeSuccess", onRender);
 
     function onRender() {
-        document.removeEventListener('onRouteChangeSuccess', onRender);
+        document.removeEventListener("onRouteChangeSuccess", onRender);
         callback();
     }
 }
@@ -279,10 +311,10 @@ function getValue(elem) {
             // jQuery.fn.val
             var callback = arguments[arguments.length - 1];
             var ret = elem.value;
-            if ('string' === typeof ret) {
-                ret = ret.replace(/\r/g, '');
-            } else {
-                ret == null ? '' : ret;
+            if ("string" === typeof ret) {
+                ret = ret.replace(/\r/g, "");
+            } else if (ret == null) {
+                ret = "";
             }
 
             callback(ret);
@@ -300,6 +332,21 @@ function getValue(elem) {
  * @return {Promise}
  */
 function setInputValue(input, value) {
+    const count = input[_key];
+
+    if (count === undefined) {
+        Object.defineProperty(input, _key, {
+            configurable: true,
+            writable: true,
+            enumerable: false,
+            value: 0
+        });
+    } else if (count === 3) {
+        return Promise.reject(new Error("Failed to setInputValue " + value));
+    } else {
+        ++input[_key];
+    }
+
     return new Promise(function(resolve, reject) {
         input.clear();
         input.sendKeys(value).then(waitTimeout(1)).then(function() {
@@ -308,6 +355,8 @@ function setInputValue(input, value) {
             if (res !== value) {
                 return setInputValue(input, value).then(resolve);
             }
+
+            input[_key] = 0;
             resolve(value);
         });
     });
