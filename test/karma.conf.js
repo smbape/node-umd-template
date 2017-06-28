@@ -5,7 +5,7 @@ module.exports = function(config) {
 
         files: [
             'test/unit/test-main.js', {
-                pattern: 'test/**/*-test.js',
+                pattern: 'test/unit/**/*-test.js',
                 included: false
             }, {
                 pattern: 'public/**/*.js',
