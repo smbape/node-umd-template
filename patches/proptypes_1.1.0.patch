@@ -1,0 +1,10 @@
+--- proptypes.js.orig
++++ proptypes.js
+@@ -1,6 +1,6 @@
+ (function (global, factory) {
+   if (typeof define === "function" && define.amd) {
+-    define('PropTypes', ['exports'], factory);
++    define(['exports'], factory);
+   } else if (typeof exports !== "undefined") {
+     factory(exports);
+   } else {
