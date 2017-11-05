@@ -21,7 +21,7 @@
     "material-design-lite": "^1.1.1",
     "moment": "^2.19.1",
     "qs": "git+https://github.com/hapijs/qs#^6.5.1",
-    "vrdom": "^0.2.3",
+    "vrdom": "^0.4.0",
     "umd-core": "^2.0.0"
   },
   "overrides": {
