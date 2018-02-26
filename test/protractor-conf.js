@@ -1,5 +1,5 @@
 "use strict";
-require("coffee-script").register();
+require("coffeescript").register();
 const server = require("../brunch-config").config.server;
 const _key = Math.random().toString(36).slice(2);
 
@@ -166,8 +166,6 @@ function onPrepare() {
 
     // expose needed globals
     _.extend(global, {
-        pathBrowserify: require("../public/node_modules/umd-core/src/path-browserify"),
-        depsLoader: require("../public/node_modules/umd-core/src/depsLoader"),
         expando: {
             initTranslation: initTranslation,
             addScenario: addScenario,

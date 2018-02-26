@@ -17,15 +17,23 @@ function postinstall() {
     // make sure patch executable exists
     which.sync('patch');
 
-    var tasks;
+    var tasks = [
+        // next => {
+        //     anyspawn.exec('patch', [
+        //         '-N', '-i',
+        //         sysPath.resolve(__dirname, '../patches/coffee-script-brunch.2.x.patch'),
+        //         sysPath.resolve(__dirname, '../node_modules/coffee-script-brunch/index.js')
+        //     ], err => {
+        //         // Ignore error
+        //         next();
+        //     });
+        // }
+    ];
 
     if (argv.indexOf('--preact') === -1) {
-        tasks = [
-            'bower install',
-            // 'bower install angular-mocks angular-loader',
-        ];
+        tasks.push('bower install');
     } else {
-        tasks = [
+        tasks.push(...[
             updateBowerJSON({
                 dependencies: {
                     "preact": undefined,
@@ -40,14 +48,14 @@ function postinstall() {
                 version: '8.1.0',
                 cdn: 'https://unpkg.com/preact@8.1.0',
                 dependencies: {}
-            }, sysPath.resolve(__dirname, '..', 'patches', 'preact_8.1.0.patch')),
+            }, sysPath.resolve(__dirname, '../patches/preact_8.1.0.patch')),
             installBowerFile({
                 name: 'proptypes',
                 main: 'proptypes.js',
                 version: '1.1.0',
                 cdn: 'https://unpkg.com/proptypes@1.1.0',
                 dependencies: {}
-            }, sysPath.resolve(__dirname, '..', 'patches', 'proptypes_1.1.0.patch')),
+            }, sysPath.resolve(__dirname, '../patches/proptypes_1.1.0.patch')),
             installBowerFile({
                 name: 'preact-compat',
                 main: 'preact-compat.js',
@@ -57,7 +65,7 @@ function postinstall() {
                     preact: '*',
                     proptypes: '*'
                 }
-            }, sysPath.resolve(__dirname, '..', 'patches', 'preact-compat_3.16.0.patch')),
+            }, sysPath.resolve(__dirname, '../patches/preact-compat_3.16.0.patch')),
             updateBowerJSON({
                 dependencies: {
                     "preact": "^8.1.0",
@@ -65,7 +73,7 @@ function postinstall() {
                     "proptypes": "^1.1.0",
                 }
             })
-        ];
+        ]);
     }
 
     push.apply(tasks, [
@@ -104,7 +112,7 @@ function installBowerFile(config, patch) {
                     fs.writeFile(sysPath.join(dest, 'bower.json'), bowerFile, next);
                     return;
                 }
-                anyspawn.exec('patch -N ' + anyspawn.quoteArg(file) + ' < ' + anyspawn.quoteArg(patch), function(err) {
+                anyspawn.exec('patch', ['-N', '-i', patch, file], function(err) {
                     if (err) {
                         return next(err);
                     }

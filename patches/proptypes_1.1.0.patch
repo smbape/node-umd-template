@@ -1,5 +1,5 @@
---- proptypes.js.orig
-+++ proptypes.js
+--- a/proptypes.js
++++ b/proptypes.js
 @@ -1,6 +1,6 @@
  (function (global, factory) {
    if (typeof define === "function" && define.amd) {

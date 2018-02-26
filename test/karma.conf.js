@@ -1,3 +1,5 @@
+const sysPath = require('path');
+
 module.exports = function(config) {
     config.set({
 
@@ -23,13 +25,30 @@ module.exports = function(config) {
             'karma-chrome-launcher',
             'karma-firefox-launcher',
             'karma-jasmine',
-            'karma-requirejs'
-        ],
+            {
+                'framework:requirejs': ['factory', (() => {
+                    function createPattern(path) {
+                        return {
+                            pattern: path,
+                            included: true,
+                            served: true,
+                            watched: false
+                        };
+                    }
 
-        junitReporter: {
-            outputFile: 'test_out/unit.xml',
-            suite: 'unit'
-        }
+                    const requirejs = sysPath.resolve(__dirname, '../app/assets/vendor/require.js');
+                    const adapter = sysPath.join(sysPath.dirname(require.resolve('karma-requirejs')), 'adapter.js');
 
+                    function initRequireJs(files) {
+                        files.unshift(createPattern(adapter));
+                        files.unshift(createPattern(requirejs));
+                    }
+
+                    initRequireJs.$inject = ['config.files'];
+
+                    return initRequireJs;
+                })()]
+            }
+        ]
     });
 };
