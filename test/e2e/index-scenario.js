@@ -34,15 +34,17 @@ expando.addScenario("Index", (build, languge) => {
             });
         });
 
-        it("should have 3 translated menu items", () => {
+        it("should have 4 translated menu items", () => {
             browser.driver.findElements(by.css("#toolbar .menu a")).then(items => {
-                expect(items.length).toBe(3);
+                expect(items.length).toBe(4);
                 expect(items[0].getText()).toBe(translate("home.home.index.title"));
                 expect(items[0].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/index`, config.baseUrl]);
                 expect(items[1].getText()).toBe(translate("home.home.step1.title"));
                 expect(items[1].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/step1`, config.baseUrl]);
                 expect(items[2].getText()).toBe(translate("home.home.step2.title"));
                 expect(items[2].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/step2`, config.baseUrl]);
+                expect(items[3].getText()).toBe(translate("home.home.step3.title"));
+                expect(items[3].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/step3`, config.baseUrl]);
             });
         });
 
