@@ -1,5 +1,5 @@
---- bower_components/preact/preact.js.orig
-+++ bower_components/preact/preact.js
+--- a/preact.js
++++ b/preact.js
 @@ -1,4 +1,6 @@
 -!function() {
 +!function(global, factory) {

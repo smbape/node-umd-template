@@ -1,14 +1,14 @@
-"use strict";
-require("coffee-script").register();
+
+require("coffeescript").register();
 const server = require("../brunch-config").config.server;
-const _key = Math.random().toString(36).slice(2);
+const SET_INTPUT_HIDDEN_ATTEMPTS_KEY = Math.random().toString(36).slice(2);
 
 exports.config = {
     localSeleniumStandaloneOpts: {
         // stdio: "inherit",
 
         // add support for Firefox 48+ using gecko driver downloaded by webdriver-manager
-        jvmArgs: (function() {
+        jvmArgs: (() => {
             // ================================================================
             // From webdriver-manager/built/lib/cmds/start.js
             // From webdriver-manager/built/lib/cmds/update.js
@@ -17,44 +17,40 @@ exports.config = {
             const path = require("path");
             const semver = require("semver");
 
-            const config_1 = require("protractor/node_modules/webdriver-manager/built/lib/config");
-            const files_1 = require("protractor/node_modules/webdriver-manager/built/lib/files");
-            const binaries = files_1.FileManager.setupBinaries();
-            const outputDir = config_1.Config.getSeleniumDir();
+            const builtConfig = require("protractor/node_modules/webdriver-manager/built/lib/config");
+            const buitFiles = require("protractor/node_modules/webdriver-manager/built/lib/files");
+            const binaries = buitFiles.FileManager.setupBinaries();
+            const outputDir = builtConfig.Config.getSeleniumDir();
 
-            const binaries_1 = require("protractor/node_modules/webdriver-manager/built/lib/binaries");
-            const binary = binaries[binaries_1.GeckoDriver.id];
+            const builtBinaries = require("protractor/node_modules/webdriver-manager/built/lib/binaries");
+            const binary = binaries[builtBinaries.GeckoDriver.id];
 
             const json = JSON.parse(fs.readFileSync(path.join(outputDir, "gecko-response.json")).toString());
             const versionsLookup = json.map((item, index) => {
                 return {
                     version: item.tag_name,
-                    index: index,
+                    index,
                     assets: item.assets
                 };
             });
 
             let latest = "";
             const oshelper = binary.configSource.oshelper();
-            versionsLookup.forEach((item) => {
+            versionsLookup.forEach(item => {
                 const version = item.version.replace("v", "");
                 const assetsArray = item.assets;
 
                 for (const asset of assetsArray) {
-                    if (asset.name.includes(oshelper)) {
-                        if (latest === "") {
-                            latest = version;
-                        } else if (semver.lt(latest, version)) {
-                            latest = version;
-                        }
+                    if (asset.name.includes(oshelper) && (latest === "" || semver.lt(latest, version))) {
+                        latest = version;
                     }
                 }
             });
-            binary.versionCustom = "v" + latest;
+            binary.versionCustom = `v${ latest }`;
 
             const executable = path.resolve(outputDir, binary.executableFilename());
-            return ["-Dwebdriver.gecko.driver=" + executable];
-        }())
+            return [`-Dwebdriver.gecko.driver=${ executable }`];
+        })()
     },
 
     allScriptsTimeout: 11000,
@@ -64,13 +60,13 @@ exports.config = {
     ],
 
     multiCapabilities: [{
-        'browserName': 'chrome'
+        browserName: "chrome"
     }, {
-        "browserName": "firefox",
-        "marionette": "true" // tell protractor to use gecko driver for firefox
-    },],
+        browserName: "firefox",
+        marionette: "true" // tell protractor to use gecko driver for firefox
+    }, ],
 
-    baseUrl: "http://" + server.hostname + ":" + server.port + "/",
+    baseUrl: `http://${ server.hostname }:${ server.port }/`,
 
     framework: "jasmine",
 
@@ -79,14 +75,15 @@ exports.config = {
         isVerbose: true
     },
 
-    onPrepare: onPrepare,
+    onPrepare,
 };
 
 // init i18n
 // should be similar to front-end i18n
-const _ = require("lodash");
+const defaults = require("lodash/defaults");
+const merge = require("lodash/merge");
 const i18n = require("i18next");
-const hasOwn = Object.prototype.hasOwnProperty;
+const {hasOwnProperty: hasProp} = Object.prototype;
 
 const i18nOptions = {
     lng: "en-GB",
@@ -96,9 +93,9 @@ const i18nOptions = {
         escapeValue: false,
         unescapeSuffix: "HTML"
     },
-    returnedObjectHandler: function(key, value, options) {
-        if (!hasOwn.call(options, "choice") || "number" !== typeof options.choice || !hasOwn.call(value, "choice") || "object" !== typeof value.choice) {
-            return "key '" + this.ns[0] + ":" + key + " (" + this.lng + ")' returned an object instead of string.";
+    returnedObjectHandler(key, value, options) {
+        if (!hasProp.call(options, "choice") || "number" !== typeof options.choice || !hasProp.call(value, "choice") || "object" !== typeof value.choice) {
+            return `key '${ this.ns[0] }:${ key } (${ this.lng })' returned an object instead of string.`;
         }
         const keys = Object.keys(value.choice).sort(intComparator);
         let choice = keys[0];
@@ -110,7 +107,7 @@ const i18nOptions = {
                 choice = keys[i];
             }
         }
-        return i18n.t(key + ".choice." + choice, options);
+        return i18n.t(`${ key }.choice.${ choice }`, options);
     }
 };
 
@@ -126,9 +123,9 @@ const customMatchers = {
     // in Firefox 49.0.2, using Gecko Driver 0.9, getAttribute('href') returns the attributes as it is setted ex: /web/fr/...
     // in Chrome 54, using Chrome Driver 2.25, getAttribute('href') returns a.href ex: http://127.0.0.1:3330/web/fr/...
     // toBeUrl returns true if href === '/' + url or base + url
-    toBeUrl: function(util, customEqualityTesters) {
+    toBeUrl(util, customEqualityTesters) {
         return {
-            compare: function(actual, expected) {
+            compare(actual, expected) {
                 if (expected === undefined) {
                     expected = [];
                 } else if (!Array.isArray(expected)) {
@@ -140,20 +137,20 @@ const customMatchers = {
 
                 let message, pass;
 
-                pass = util.equals(actual, "/" + url, customEqualityTesters);
+                pass = util.equals(actual, `/${ url }`, customEqualityTesters);
                 if (!pass && base !== "/") {
                     pass = util.equals(actual, base + url, customEqualityTesters);
                 }
 
                 if (pass) {
-                    message = "Expected " + actual + " not to equal url " + url;
+                    message = `Expected ${ actual } not to equal url ${ url }`;
                 } else {
-                    message = "Expected " + actual + " to equal url " + url;
+                    message = `Expected ${ actual } to equal url ${ url }`;
                 }
 
                 return {
-                    pass: pass,
-                    message: message
+                    pass,
+                    message
                 };
             }
         };
@@ -165,17 +162,15 @@ function onPrepare() {
     browser.ignoreSynchronization = true;
 
     // expose needed globals
-    _.extend(global, {
-        pathBrowserify: require("../public/node_modules/umd-core/src/path-browserify"),
-        depsLoader: require("../public/node_modules/umd-core/src/depsLoader"),
+    Object.assign(global, {
         expando: {
-            initTranslation: initTranslation,
-            addScenario: addScenario,
-            waitTimeout: waitTimeout,
-            waitRender: waitRender,
-            waitRouteChangeSuccess: waitRouteChangeSuccess,
-            setInputValue: setInputValue,
-            getValue: getValue
+            initTranslation,
+            addScenario,
+            waitTimeout,
+            waitRender,
+            waitRouteChangeSuccess,
+            setInputValue,
+            getValue
         }
     });
 }
@@ -185,7 +180,7 @@ function updateRessources(resources, __resources) {
         resources = resources(i18nOptions);
     }
 
-    return _.merge(__resources, resources);
+    return merge(__resources, resources);
 }
 
 /**
@@ -203,7 +198,7 @@ function initTranslation(lng, resources, done) {
         }
     }
 
-    const options = _.defaults({
+    const options = defaults({
         lng: localeMap[lng] || "en-GB",
         resources: __resources
     }, i18nOptions);
@@ -212,8 +207,8 @@ function initTranslation(lng, resources, done) {
 }
 
 function addScenario(name, fn) {
-    const builds = ["web", 'app'];
-    const languages = ["en", 'fr'];
+    const builds = ["web", "app"];
+    const languages = ["en", "fr"];
     const leni = builds.length;
     const lenj = languages.length;
     let build, language, i, j, specName;
@@ -223,9 +218,9 @@ function addScenario(name, fn) {
         for (j = 0; j < lenj; j++) {
             language = languages[j];
             specName = require("util").inspect({
-                name: name,
-                build: build,
-                language: language
+                name,
+                build,
+                language
             }, {
                 depth: null,
                 colors: true
@@ -238,7 +233,7 @@ function addScenario(name, fn) {
         const scenario = fn(build, language);
 
         return function() {
-            beforeEach(function() {
+            beforeEach(() => {
                 jasmine.addMatchers(customMatchers);
             });
 
@@ -250,7 +245,7 @@ function addScenario(name, fn) {
 function waitTimeout(ms) {
     const deferred = protractor.promise.defer();
     const promise = deferred.promise;
-    flow.execute(function() {
+    flow.execute(() => {
         setTimeout(deferred.fulfill.bind(deferred), ms);
         return promise;
     });
@@ -264,7 +259,7 @@ function waitRender(prevUrl, nextUrl) {
 }
 
 function _waitRender() {
-    var callback = arguments[arguments.length - 1];
+    const callback = arguments[arguments.length - 1];
     iterate();
 
     function iterate() {
@@ -282,7 +277,7 @@ function waitRouteChangeSuccess(prevUrl, nextUrl) {
 }
 
 function _waitRouteChangeSuccess(prevUrl, nextUrl) {
-    var callback = arguments[arguments.length - 1];
+    const callback = arguments[arguments.length - 1];
 
     if (nextUrl) {
         if (window.location.href === nextUrl) {
@@ -306,11 +301,11 @@ function _waitRouteChangeSuccess(prevUrl, nextUrl) {
 }
 
 function getValue(elem) {
-    return new Promise(function(resolve, reject) {
+    return new Promise((resolve, reject) => {
         browser.executeAsyncScript(function(elem) {
             // jQuery.fn.val
-            var callback = arguments[arguments.length - 1];
-            var ret = elem.value;
+            const callback = arguments[arguments.length - 1];
+            let ret = elem.value;
             if ("string" === typeof ret) {
                 ret = ret.replace(/\r/g, "");
             } else if (ret == null) {
@@ -318,45 +313,47 @@ function getValue(elem) {
             }
 
             callback(ret);
-        }, elem).then(function(value) {
+        }, elem).then(value => {
             resolve(value);
         });
     });
 }
 
 /**
- * SendKeys intermittently inserts incorrect text on IE only
+ * SendKeys sometimes inserts incorrect text on IE only
  * https://github.com/seleniumhq/selenium-google-code-issue-archive/issues/3699
  * @param  {Element} input Input element
  * @param  {Stirng}  value text to send
  * @return {Promise}
  */
 function setInputValue(input, value) {
-    const count = input[_key];
+    const attempts = input[SET_INTPUT_HIDDEN_ATTEMPTS_KEY];
 
-    if (count === undefined) {
-        Object.defineProperty(input, _key, {
+    if (attempts === 3) {
+        return Promise.reject(new Error(`Failed to setInputValue ${ value }`));
+    }
+
+    if (attempts === undefined) {
+        Object.defineProperty(input, SET_INTPUT_HIDDEN_ATTEMPTS_KEY, {
             configurable: true,
             writable: true,
             enumerable: false,
             value: 0
         });
-    } else if (count === 3) {
-        return Promise.reject(new Error("Failed to setInputValue " + value));
-    } else {
-        ++input[_key];
     }
 
-    return new Promise(function(resolve, reject) {
+    ++input[SET_INTPUT_HIDDEN_ATTEMPTS_KEY];
+
+    return new Promise((resolve, reject) => {
         input.clear();
-        input.sendKeys(value).then(waitTimeout(1)).then(function() {
+        input.sendKeys(value).then(waitTimeout(1)).then(() => {
             return getValue(input);
-        }).then(function(res) {
+        }).then(res => {
             if (res !== value) {
                 return setInputValue(input, value).then(resolve);
             }
 
-            input[_key] = 0;
+            input[SET_INTPUT_HIDDEN_ATTEMPTS_KEY] = 0;
             resolve(value);
         });
     });

@@ -1,5 +1,5 @@
---- preact.ori.js	2016-11-12 13:15:29.943729700 +0100
-+++ preact.js	2016-11-12 13:41:34.652394600 +0100
+--- a/preact.js
++++ b/preact.js
 @@ -1,327 +1,631 @@
 -!function(global, factory) {
 -    'object' == typeof exports && 'undefined' != typeof module ? factory(exports) : 'function' == typeof define && define.amd ? define([ 'exports' ], factory) : factory(global.preact = global.preact || {});

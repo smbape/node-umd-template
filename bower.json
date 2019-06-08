@@ -6,23 +6,31 @@
   "umd": true,
   "ignore": [
     "**/.*",
+    "**/*.log",
+    "**/*.sublime-project",
+    "**/*.sublime-workspace",
+    "bower_components",
+    "node_modules",
+    "public",
+    "work",
     "component.json",
-    "package.json",
-    "node_modules"
+    "package.json"
   ],
   "licenses": "MIT",
   "dependencies": {
-    "backbone": "^1.2.3",
-    "bootstrap": "^3.3.6",
-    "i18next": "^10.0.7",
-    "jquery": "^3.2.1",
-    "jquery-mockjax": "^2.1.0",
-    "lodash": "^4.17.4",
-    "material-design-lite": "^1.1.1",
-    "moment": "^2.19.1",
-    "qs": "git+https://github.com/hapijs/qs#^6.5.1",
-    "react": "^15.3.2",
-    "umd-core": "^2.0.0"
+    "backbone" : "git+https://github.com/jashkenas/backbone#^1.4.0",
+    "bootstrap" : "git+https://github.com/twbs/bootstrap#^4.0.0",
+    "i18next" : "git+https://github.com/i18next/i18next#^15.0.4",
+    "jquery" : "git+https://github.com/jquery/jquery-dist#^3.3.1",
+    "jquery-mockjax" : "git+https://github.com/jakerella/jquery-mockjax#^2.2.1",
+    "lodash" : "git+https://github.com/lodash/lodash#^4.17.11",
+    "material-design-lite" : "git+https://github.com/google/material-design-lite#^1.3.0",
+    "moment" : "git+https://github.com/moment/moment#^2.24.0",
+    "popper.js" : "git+https://github.com/FezVrasta/popper.js#^1.14.7",
+    "qs" : "git+https://github.com/hapijs/qs#^6.6.0",
+    "react": "https://unpkg.com/react@16/umd/react.production.min.js",
+    "react-dom": "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js",
+    "umd-core" : "git+https://github.com/smbape/node-umd-core.git#^3.0.1"
   },
   "overrides": {
     "backbone": {
@@ -38,9 +46,13 @@
         "dist/fonts/**"
       ],
       "dependencies": {
-        "jquery": "*"
+        "jquery": "*",
+        "popper.js": "*"
       },
       "exports": "jQuery.fn.emulateTransitionEnd"
+    },
+    "i18next": {
+      "main": "i18next.js"
     },
     "lodash": {
       "main": "dist/lodash.js"
@@ -50,17 +62,10 @@
         "material.js"
       ]
     },
-    "react": {
-      "main": [
-        "react.min.js"
-      ],
-      "map": {
-        "react-dom.min.js": "react-dom"
+    "react-dom": {
+      "dependencies": {
+        "react": "*"
       }
     }
-  },
-  "resolutions": {
-    "jquery": "^3.2.1",
-    "i18next": "^10.0.7"
   }
 }
