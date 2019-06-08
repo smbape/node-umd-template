@@ -34,9 +34,9 @@ expando.addScenario("Index", (build, languge) => {
             });
         });
 
-        it("should have 5 translated menu items", () => {
+        it("should have 6 translated menu items", () => {
             browser.driver.findElements(by.css("#toolbar .menu a")).then(items => {
-                expect(items.length).toBe(5);
+                expect(items.length).toBe(6);
                 expect(items[0].getText()).toBe(translate("home.home.index.title"));
                 expect(items[0].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/index`, config.baseUrl]);
                 expect(items[1].getText()).toBe(translate("home.home.step1.title"));
@@ -47,6 +47,8 @@ expando.addScenario("Index", (build, languge) => {
                 expect(items[3].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/step3`, config.baseUrl]);
                 expect(items[4].getText()).toBe(translate("home.home.step4.title"));
                 expect(items[4].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/home/step4`, config.baseUrl]);
+                expect(items[5].getText()).toBe(translate("home.step5.user-list.title"));
+                expect(items[5].getAttribute("href")).toBeUrl([`${ build }/${ languge }/home/step5/user-list`, config.baseUrl]);
             });
         });
 
